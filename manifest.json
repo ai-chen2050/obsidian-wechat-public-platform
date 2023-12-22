@@ -1,7 +1,7 @@
 {
 	"id": "Wepublic-plugin",
 	"name": "Wechat Public Plugin",
-	"version": "0.9.0",
+	"version": "0.16.0",
 	"minAppVersion": "0.15.0",
 	"description": "Demonstrates some of the capabilities of the Obsidian API.",
 	"author": "Obsidian",

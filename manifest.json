@@ -1,11 +1,11 @@
 {
-	"id": "Wepublic-plugin",
-	"name": "Wechat Public Plugin",
-	"version": "0.17.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"id": "obsidian-wechat-public-platform",
+	"name": "Obsidian Wechat Public Platform",
+	"version": "v0.17.1",
+	"minAppVersion": "v0.16.0",
+	"description": "Obsidian Wechat public Plugin is a plugin to release article from your Obsidian Vault.",
+	"author": "Blake Chan",
+	"authorUrl": "https://ai-chen2050.github.io/",
+	"fundingUrl": "https://www.buymeacoffee.com/blakechan",
 	"isDesktopOnly": false
 }

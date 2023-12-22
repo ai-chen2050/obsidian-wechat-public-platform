@@ -6,34 +6,34 @@
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 
-[ZH]()
+[EN](./README.md)
 
-The Obsidian WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
+黑曜石微信公众平台插件是黑曜石社区插件，用于将黑曜石中的文章或视频等资源发布到微信公众号。
 
-## Release history
+## 发布历史
 https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 
-## Functions & Command
+## 功能及命令
 
-- [ upload material on WeChatPublic ] Upload resource pictures and videos to WeChat public account resource management (waiting for obsidian to support formdata body)
-- [ add draft on WeChatPublic ] Add graphic and text resources to the draft box of WeChat public platform
-- [ Release article on WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
-- [ Send all fees on WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
+- [ upload material on WeChatPublic ]【微信公众号上传素材】将资源图片、视频上传至微信公众号资源管理（等待黑曜石支持formdata体）
+- [ add draft on WeChatPublic ]【微信公众平台添加草稿】微信公众平台草稿箱添加图文资源
+- [ Release article on WeChatPublic ]【微信公众号发布文章】发布图文消息及各类资源并发布到微信公众平台
+- [ Send all fees on WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：需要认证有通话权限）
 
 ![commands](./public/commands.png)
 ![uploadMateial](./public/uploadMateial.png)
 
-## Install
+## 安装
 
-Directly search for `wechat public` in the plug-in market, find `Wechat public Plugin` and click `install` to install it. After the installation is complete, click `Enable` to enable the plug-in. [png]
+直接在插件市场搜索“微信公众号”，找到“微信公众号插件”，点击“安装”进行安装。 安装完成后，点击“启用”即可启用插件。 
 
-Or download the source code and compile it into main.js manifest.json and put it in the plug-in directory under .obsidian, and then Enable.
+或者下载源码编译成 main.js 和 manifest.json 放到插件目录下的.obsidian下，然后Enable。
 
-## Using case
+## 使用
 
-### Article frontmatter annotation
+### 文章属性字段
 
-- It is recommended to use the following frontmatter. This plug-in will use the following fields
+- 建议使用以下要发布的文章的 frontmatter。 该插件将使用以下字段
 
 ```yaml
 author: Blake   // for article author
@@ -45,8 +45,8 @@ source_url: ""  // ref article url source
 digest: ""
 ```
 
-- Article cover: When the WeChat public platform internal resource thumb_media_id has the highest priority, followed by the network image banner, and finally the local image path of obsidian
-- Other fields will be filled with relevant information about articles published on the WeChat public platform.
+- 文章封面：微信公众平台内部资源thumb_media_id优先级最高时，其次是网络图片banner，最后是黑曜石本地图片路径
+- 其他字段填写微信公众平台发表文章的相关信息。
 
 
 ## Wechat public API
@@ -62,7 +62,7 @@ digest: ""
 
 
 
-## Star History
+## Star 历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=ai-chen2050/obsidian-wechat-public-platform&type=Date)](https://star-history.com/#ai-chen2050/obsidian-wechat-public-platform&Date)
 

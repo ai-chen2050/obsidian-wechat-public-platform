@@ -1,6 +1,4 @@
 import { Cookie } from 'set-cookie-parser';
-import { get } from 'svelte/store';
-import { settingsStore } from '../src/settings';
 
 export const parseCookies = (cookieInput: string): Cookie[] => {
 	if (cookieInput === '') {
@@ -29,13 +27,14 @@ export const getCookieString = (cookies: Cookie[]): string => {
 		.join(';');
 };
 
-export const getEncodeCookieString = (): string => {
-	const cookiesArr = get(settingsStore).cookies;
-	return cookiesArr
-		.map((cookie) => {
-			const key = cookie.name;
-			const value = cookie.value;
-			return key + '=' + encodeURIComponent(value);
-		})
-		.join(';');
-};
+export const generateRandomString = (length: number): string => {
+	const characters = 'ijklmnopqrstuvabcdefghijklmnopqrstuvwxyz0123456789';
+	let randomString = '';
+  
+	for (let i = 0; i < length; i++) {
+	  const randomIndex = Math.floor(Math.random() * characters.length);
+	  randomString += characters.charAt(randomIndex);
+	}
+  
+	return randomString;
+  }

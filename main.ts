@@ -1,6 +1,9 @@
-import { App, Modal, Notice, Plugin, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, Setting, TFile, requestUrl } from 'obsidian';
 import { WeChatPublicSettingTab } from "./src/settingTab"
-
+import ApiManager from 'src/api';
+import { settingsStore } from 'src/settings';
+import { FrontMatterManager } from 'utils/frontmatter';
+import { WeChatUploadMaterialModal, TestModal } from 'src/showModals';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -12,30 +15,89 @@ const DEFAULT_SETTINGS: WeChatPublicSettings = {
 
 export default class WeChatPublic extends Plugin {
 	settings: WeChatPublicSettings;
+	frontManager: FrontMatterManager;
 
 	async onload() {
-		await this.loadSettings();
+		settingsStore.initialise(this);
+		this.frontManager = new FrontMatterManager(this.app);
+		const apiManager = new ApiManager(this.app);
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Wechat Public', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+		// const ribbonIconEl = this.addRibbonIcon('dice', 'Wechat Public', (evt: MouseEvent) => {
+		// 	new Notice('This is a notice!');
+		// });
+		// ribbonIconEl.addClass('my-plugin-ribbon-class');
+
+		this.addCommand({
+			id: 'send-all-fees-on-wechatpublic',
+			name: 'Send all fees on WeChatPublic【 normal account one shot a day 】',
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				const file = view.file
+				const basename = file?.basename
+				const text = await this.frontManager.removeFrontMatter(file!)
+
+				const cache = this.app.metadataCache.getFileCache(file!);
+				if (cache?.frontmatter){
+					console.log(cache?.frontmatter)
+				}
+				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				await apiManager.sendAll(media_id!)
+			}
 		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'release-article-on-wechatpublic',
 			name: 'Release article on WeChatPublic',
-			// checkCallback
-			callback: () => {
-				new WeChatPublicModal(this.app).open();
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				const file = view.file
+				const basename = file?.basename
+				const text = await this.frontManager.removeFrontMatter(file!)
+
+				const cache = this.app.metadataCache.getFileCache(file!);
+				if (cache?.frontmatter){
+					console.log(cache?.frontmatter)
+				}
+				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				await apiManager.freepublish(media_id!)
+			}
+		});
+
+		this.addCommand({
+			id: 'add-draft-on-wechatpublic',
+			name: 'add draft on WeChatPublic',
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				const file = view.file
+				const basename = file?.basename
+				const text = await this.frontManager.removeFrontMatter(file!)
+				console.log(text);
+
+				const cache = this.app.metadataCache.getFileCache(file!);
+				if (cache?.frontmatter){
+					console.log(cache?.frontmatter)
+				}
+				
+				apiManager.newDraft(basename!, text, cache?.frontmatter!)
+			}
+		});
+
+		this.addCommand({
+			id: 'upload-material-on-wechatpublic',
+			name: 'upload material on WeChatPublic.【 wait support Formdata 】',
+			callback: async () => {
+				new WeChatUploadMaterialModal(this.app, (path, type, name) => {
+                    console.log(path, type, name);
+					if (path === "" || type === "") {
+						new Notice('Please input correct material details!');
+						return
+					}
+					// const path = "https://mmbiz.qpic.cn/mmbiz_png/avKRXZvpU06RaicVPeDfRia2jZODXWV7qeRbL32r2FnWySlDTTkicCDWaTCoFszFlchcGxXlBN6efDeNf4sEJvV6w/640?wx_fmt=png";
+					// apiManager.uploadMaterial(path, type, name)
+                }).open();
+				return
 			}
 		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new WeChatPublicSettingTab(this.app, this));
+		this.addSettingTab(new WeChatPublicSettingTab(this.app, this, apiManager));
 	}
 
 	onunload() {
@@ -48,21 +110,5 @@ export default class WeChatPublic extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class WeChatPublicModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
 	}
 }

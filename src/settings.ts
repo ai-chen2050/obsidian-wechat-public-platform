@@ -1,61 +1,43 @@
-import { Cookie } from 'set-cookie-parser';
 import { writable } from 'svelte/store';
 import WeChatPublic from '../main';
 
-interface WereadPluginSettings {
-	cookies: Cookie[];
-	noteLocation: string;
-	dailyNotesLocation: string;
-	dailyNotesFormat: string;
-	insertAfter: string;
-	insertBefore: string;
-	lastCookieTime: number;
-	isCookieValid: boolean;
-	user: string;
-	userVid: string;
-	noteCountLimit: number;
-	subFolderType: string;
-	fileNameType: string;
-	dailyNotesToggle: boolean;
-	notesBlacklist: string;
+interface WechatPublicPluginSettings {
+	appid: string;
+	secret: string;
+	accessToken: string;
+	lastAccessKeyTime: number
+	isTokenValid: boolean;
+	noteLocationFolder: string;	// for automatic release using
+	BlacklistFolder: string;
 }
 
-const DEFAULT_SETTINGS: WereadPluginSettings = {
-	cookies: [],
-	noteLocation: '/',
-	dailyNotesLocation: '/',
-	insertAfter: '<!-- start of weread -->',
-	insertBefore: '<!-- end of weread -->',
-	dailyNotesFormat: 'YYYY-MM-DD',
-	lastCookieTime: -1,
-	isCookieValid: false,
-	user: '',
-	userVid: '',
-	noteCountLimit: -1,
-	subFolderType: '-1',
-	fileNameType: 'BOOK_NAME',
-	dailyNotesToggle: false,
-	notesBlacklist: ''
+const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
+	appid: '',
+	secret: '',
+	accessToken: '',
+	lastAccessKeyTime: -1,
+	isTokenValid: false,
+	noteLocationFolder: '',
+	BlacklistFolder: ''
 };
 
 const createSettingsStore = () => {
-	const store = writable(DEFAULT_SETTINGS as WereadPluginSettings);
+	const store = writable(DEFAULT_SETTINGS as WechatPublicPluginSettings);
 
 	let _plugin!: WeChatPublic;
 
 	const initialise = async (plugin: WeChatPublic): Promise<void> => {
 		const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
-		const settings: WereadPluginSettings = { ...data };
-		console.log('--------init cookie------', settings.cookies);
-		if (settings.cookies.length > 1) {
-			setUser(settings.cookies);
+		const settings: WechatPublicPluginSettings = { ...data };
+		console.log('--------init get access token------');
+		if (settings.accessToken !== '') {
+			setAccessToken(settings.accessToken);
+		} else {
+			console.log("appid " + settings.appid + " ,secret " + settings.secret);
+			setAppId(settings.appid);
+			setSecret(settings.secret);
 		}
 
-		const wr_vid = settings.cookies.find((cookie) => cookie.name === 'wr_vid');
-		if (wr_vid === undefined || wr_vid.value === '') {
-			settings.userVid = '';
-			settings.isCookieValid = false;
-		}
 		store.set(settings);
 		_plugin = plugin;
 	};
@@ -69,116 +51,51 @@ const createSettingsStore = () => {
 		}
 	});
 
-	const clearCookies = () => {
-		console.log('[weread plugin] cookie已失效，清理cookie...');
+	const clearSecret = () => {
+		console.log('[wechat Public plugin] clear secret and exit.');
 		store.update((state) => {
-			state.cookies = [];
-			state.lastCookieTime = new Date().getTime();
-			state.user = '';
-			state.userVid = '';
-			state.isCookieValid = false;
+			state.accessToken = '';
+			state.lastAccessKeyTime = new Date().getTime();
+			state.appid = '';
+			state.secret = '';
+			state.isTokenValid = false;
 			return state;
 		});
 	};
 
-	const setCookies = (cookies: Cookie[]) => {
+	const setAccessToken = (accessToken: string) => {
 		store.update((state) => {
-			state.cookies = cookies;
-			state.lastCookieTime = new Date().getTime();
-			state.isCookieValid = true;
-			setUser(cookies);
+			state.accessToken = accessToken;
+			state.lastAccessKeyTime = new Date().getTime();
+			state.isTokenValid = true;
 			return state;
 		});
 	};
 
-	const setUser = (cookies: Cookie[]) => {
-		for (const cookie of cookies) {
-			if (cookie.name == 'wr_name') {
-				if (cookie.value !== '') {
-					console.log('[weread plugin] setting user name=>', cookie.value);
-					store.update((state) => {
-						state.user = cookie.value;
-						return state;
-					});
-				}
-			}
-			if (cookie.name == 'wr_vid') {
-				if (cookie.value !== '') {
-					console.log('[weread plugin] setting user vid=>', cookie.value);
-					store.update((state) => {
-						state.userVid = cookie.value;
-						return state;
-					});
-				}
-			}
-		}
+	const setAppId = (appId: string) => {
+		store.update((state) => {
+			state.appid = appId;
+			return state;
+		});
+	};
+
+	const setSecret = (secret: string) => {
+		store.update((state) => {
+			state.secret = secret;
+			return state;
+		});
 	};
 
 	const setNoteLocationFolder = (value: string) => {
 		store.update((state) => {
-			state.noteLocation = value;
+			state.noteLocationFolder = value;
 			return state;
 		});
 	};
 	
-	const setNoteCountLimit = (noteCountLimit: number) => {
+	const setBlacklistFolder = (notebookBlacklist: string) => {
 		store.update((state) => {
-			state.noteCountLimit = noteCountLimit;
-			return state;
-		});
-	};
-
-	const setSubFolderType = (subFolderType: string) => {
-		store.update((state) => {
-			state.subFolderType = subFolderType;
-			return state;
-		});
-	};
-
-	const setDailyNotesToggle = (dailyNotesToggle: boolean) => {
-		store.update((state) => {
-			state.dailyNotesToggle = dailyNotesToggle;
-			return state;
-		});
-	};
-
-	const setDailyNotesFolder = (value: string) => {
-		store.update((state) => {
-			state.dailyNotesLocation = value;
-			return state;
-		});
-	};
-
-	const setDailyNotesFormat = (value: string) => {
-		store.update((state) => {
-			state.dailyNotesFormat = value;
-			return state;
-		});
-	};
-
-	const setInsertAfter = (value: string) => {
-		store.update((state) => {
-			state.insertAfter = value;
-			return state;
-		});
-	};
-
-	const setInsertBefore = (value: string) => {
-		store.update((state) => {
-			state.insertBefore = value;
-			return state;
-		});
-	};
-
-	const setFileNameType = (fileNameType: string) => {
-		store.update((state) => {
-			state.fileNameType = fileNameType;
-			return state;
-		});
-	};
-	const setNoteBlacklist = (notebookBlacklist: string) => {
-		store.update((state) => {
-			state.notesBlacklist = notebookBlacklist;
+			state.BlacklistFolder = notebookBlacklist;
 			return state;
 		});
 	};
@@ -187,17 +104,11 @@ const createSettingsStore = () => {
 		initialise,
 		actions: {
 			setNoteLocationFolder,
-			setCookies,
-			clearCookies,
-			setNoteCountLimit,
-			setSubFolderType,
-			setFileNameType,
-			setDailyNotesToggle,
-			setDailyNotesFolder,
-			setDailyNotesFormat,
-			setInsertAfter,
-			setInsertBefore,
-			setNoteBlacklist
+			setAccessToken,
+			setAppId,
+			setSecret,
+			clearSecret,
+			setBlacklistFolder
 		}
 	};
 };

@@ -6,7 +6,7 @@
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 
-[ZH]()
+[ZH 中文](./README-zh.md)
 
 The Obsidian WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
 
@@ -36,6 +36,8 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 ## Install
 
 Directly search for `wechat public` in the plug-in market, find `Wechat public Plugin` and click `install` to install it. After the installation is complete, click `Enable` to enable the plug-in. [png]
+
+Second method is download the [release](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases) package, then make a new dir, name to wechat-public-plugin, last put them to .obsidian/plugin, and find 3rd plugin to enable.
 
 Or download the source code and compile it into main.js manifest.json and put it in the plug-in directory under .obsidian, and then Enable.
 

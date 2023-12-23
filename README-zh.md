@@ -6,7 +6,7 @@
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 
-[EN](./README.md)
+[EN English](./README.md)
 
 黑曜石微信公众平台插件是黑曜石社区插件，用于将黑曜石中的文章或视频等资源发布到微信公众号。
 
@@ -34,6 +34,8 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 ## 安装
 
 直接在插件市场搜索“微信公众号”，找到“微信公众号插件”，点击“安装”进行安装。 安装完成后，点击“启用”即可启用插件。 
+
+第二种方法是下载[发布包](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)，然后创建一个新的目录，名称为wechat-public-plugin，最后把它们放到。obsidian/plugin，然后找到第三个插件来启用。
 
 或者下载源码编译成 main.js 和 manifest.json 放到插件目录下的.obsidian下，然后Enable。
 

@@ -7,6 +7,7 @@ interface WechatPublicPluginSettings {
 	accessToken: string;
 	lastAccessKeyTime: number
 	isTokenValid: boolean;
+	downloadFolder: string;	// for automatic release using
 	noteLocationFolder: string;	// for automatic release using
 	BlacklistFolder: string;
 }
@@ -17,6 +18,7 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	accessToken: '',
 	lastAccessKeyTime: -1,
 	isTokenValid: false,
+	downloadFolder: '',
 	noteLocationFolder: '',
 	BlacklistFolder: ''
 };
@@ -93,6 +95,13 @@ const createSettingsStore = () => {
 		});
 	};
 	
+	const setDownloadFolder = (value: string) => {
+		store.update((state) => {
+			state.downloadFolder = value;
+			return state;
+		});
+	};
+	
 	const setBlacklistFolder = (notebookBlacklist: string) => {
 		store.update((state) => {
 			state.BlacklistFolder = notebookBlacklist;
@@ -104,6 +113,7 @@ const createSettingsStore = () => {
 		initialise,
 		actions: {
 			setNoteLocationFolder,
+			setDownloadFolder,
 			setAccessToken,
 			setAppId,
 			setSecret,

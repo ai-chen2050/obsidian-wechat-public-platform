@@ -3,6 +3,7 @@ import WeChatPublic from '../main'
 import { settingsStore } from './settings'
 import ApiManager from './api'
 import { get } from 'svelte/store';
+import pickBy from 'lodash.pickby';
 
 export class WeChatPublicSettingTab extends PluginSettingTab {
 	plugin: WeChatPublic;
@@ -28,6 +29,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 
 		this.setAppId();
 		this.setSecret();
+		this.setDownloadFolder();
 		this.setBlacklist();
 		this.setNoteLocationFolder();
 	}
@@ -124,6 +126,27 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 					 .onChange((value: string) => {
 						settingsStore.actions.setNoteLocationFolder(value);
 				});
+			});
+	}
+
+	private setDownloadFolder(): void {
+		new Setting(this.containerEl)
+			.setName('DownloadFolder')
+			.setDesc('download folder from wechat public')
+			.addDropdown((dropdown) => {
+				const files = (this.app.vault.adapter as any).files;
+				const folders = pickBy(files, (val: any) => {
+					return val.type === 'folder';
+				});
+
+				Object.keys(folders).forEach((val) => {
+					dropdown.addOption(val, val);
+				});
+				return dropdown
+					.setValue(get(settingsStore).downloadFolder)
+					.onChange(async (value) => {
+						settingsStore.actions.setDownloadFolder(value);
+					});
 			});
 	}
 

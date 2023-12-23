@@ -3,7 +3,7 @@ import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
-import { WeChatUploadMaterialModal, TestModal } from 'src/showModals';
+import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal } from 'src/showModals';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -36,9 +36,10 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 
 				const cache = this.app.metadataCache.getFileCache(file!);
-				if (cache?.frontmatter){
-					console.log(cache?.frontmatter)
-				}
+				// for debuging
+				// if (cache?.frontmatter){
+				// 	console.log(cache?.frontmatter)
+				// }
 				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
 				await apiManager.sendAll(media_id!)
 			}
@@ -53,9 +54,6 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 
 				const cache = this.app.metadataCache.getFileCache(file!);
-				if (cache?.frontmatter){
-					console.log(cache?.frontmatter)
-				}
 				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
 				await apiManager.freepublish(media_id!)
 			}
@@ -68,14 +66,10 @@ export default class WeChatPublic extends Plugin {
 				const file = view.file
 				const basename = file?.basename
 				const text = await this.frontManager.removeFrontMatter(file!)
-				console.log(text);
+				// console.log(text);
 
 				const cache = this.app.metadataCache.getFileCache(file!);
-				if (cache?.frontmatter){
-					console.log(cache?.frontmatter)
-				}
-				
-				apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				await apiManager.newDraft(basename!, text, cache?.frontmatter!)
 			}
 		});
 
@@ -83,14 +77,30 @@ export default class WeChatPublic extends Plugin {
 			id: 'upload-material-on-wechatpublic',
 			name: 'upload material on WeChatPublic.【 wait support Formdata 】',
 			callback: async () => {
-				new WeChatUploadMaterialModal(this.app, (path, type, name) => {
+				new WeChatUploadMaterialModal(this.app,async (path, type, name) => {
                     console.log(path, type, name);
 					if (path === "" || type === "") {
 						new Notice('Please input correct material details!');
 						return
 					}
 					// const path = "https://mmbiz.qpic.cn/mmbiz_png/avKRXZvpU06RaicVPeDfRia2jZODXWV7qeRbL32r2FnWySlDTTkicCDWaTCoFszFlchcGxXlBN6efDeNf4sEJvV6w/640?wx_fmt=png";
-					// apiManager.uploadMaterial(path, type, name)
+					await apiManager.uploadMaterial(path, type, name)
+                }).open();
+				return
+			}
+		});
+
+		this.addCommand({
+			id: 'download-material-from-wechatpublic',
+			name: 'download material from WeChatPublic.',
+			callback: async () => {
+				new WeChatDownloadMaterialModal(this.app,async (offset, type, totalCount) => {
+                    console.log(type, offset, totalCount);
+					if (offset === "" || type === "" || totalCount === "") {
+						new Notice('Please input all fields!');
+						return
+					}
+					await apiManager.batchGetMaterial(type, Number(offset), Number(totalCount))
                 }).open();
 				return
 			}

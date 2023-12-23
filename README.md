@@ -19,9 +19,19 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ add draft on WeChatPublic ] Add graphic and text resources to the draft box of WeChat public platform
 - [ Release article on WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
 - [ Send all fees on WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
+- [download-material-from-wechatpublic] download material(news,image,video,audio) from wechat public platform
 
-![commands](./public/commands.png)
-![uploadMateial](./public/uploadMateial.png)
+<br>
+
+---
+
+|    Overall    |    Down/Upload    |
+|:-----------:|:-----------:|
+| ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
+| ![commands](./public/commands.png)| ![download](./public/download.png) |
+
+---
+
 
 ## Install
 
@@ -48,12 +58,23 @@ digest: ""
 - Article cover: When the WeChat public platform internal resource thumb_media_id has the highest priority, followed by the network image banner, and finally the local image path of obsidian
 - Other fields will be filled with relevant information about articles published on the WeChat public platform.
 
+### API Key And Secret
+
+- [Login](https://mp.weixin.qq.com/) Tencent Wechat Server, go into Setting and Develop page.
+- And find the basic setting subpage of Setting and Develop page. copy appid and secret to plugin setting.
+
+### whiteList
+
+- The wechat platform request user put the client Ip to server whitelist. It's same page with API Key and Secret.
+- You could find your outneter ip in [here](https://tool.lu/ip/). 
+- And put ip [192.168.0.0/16] or [192.168.66.66] if you out network ip is [192.168.66.66]
 
 ## Wechat public API
 [Wechat API](./docs/wepublic.md)
 
 ## Support & Funding
 
+<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">
 <img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">
 
 <div align="right">

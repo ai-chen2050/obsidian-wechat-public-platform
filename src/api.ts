@@ -1,19 +1,19 @@
-import { Notice, requestUrl, RequestUrlParam, Platform, FrontMatterCache, TFile, App } from 'obsidian';
+import { Notice, requestUrl, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml } from 'obsidian';
 import { settingsStore } from './settings';
 import { get } from 'svelte/store';
 import {marked} from 'marked'
-import MarkdownIt from 'markdown-it'
 import { basicStyle } from './style/basicStyle';
 import {wechatFormat} from './style/wechatFormat';
 import {codeStyle} from './style/codeStyle';
 import juice from "juice";
+import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
-import { ArticleElement, Articles } from './models';
+import { ArticleElement, Articles, BatchGetMaterial, MDFrontMatterContent, MediaItem, NewsItem } from './models';
 import { generateRandomString } from 'utils/cookiesUtil';
 export default class ApiManager {
 	app: App;
-	
-    constructor(app: App) {
+
+	constructor(app: App) {
         this.app = app;
     }
 
@@ -253,7 +253,7 @@ export default class ApiManager {
 			};
 			const resp = await requestUrl(req);
             const errorcode = resp.json["errcode"]
-            if ( errorcode !== 0) {
+            if ( errorcode !== 0 && errorcode !== undefined) {
                 new Notice(`Failed to free publish. errcode ${errorcode},` + resp.json["errmsg"]);
 				return
             }
@@ -296,7 +296,7 @@ export default class ApiManager {
 			};
 			const resp = await requestUrl(req);
             const errorcode = resp.json["errcode"]
-            if ( errorcode !== 0) {
+            if ( errorcode !== 0 && errorcode !== undefined) {
                 new Notice(`Failed to sending all fees. errcode ${errorcode},` + resp.json["errmsg"]);
 				return
             }
@@ -307,6 +307,109 @@ export default class ApiManager {
 				'Failed to sending all fees. Please check your appId, secret and try again.'
 			);
 			console.error('send all fees error' + e);
+		}
+	}
+
+	async batchGetMaterial(type: string, offset: number, count: number) {
+        try {
+            const setings = get(settingsStore)
+            const pass = await this.refreshAccessToken(setings.appid, setings.secret)
+			if (pass === false || isNaN(offset) || isNaN(count)) {
+				return
+			}
+
+			const url = `${this.baseUrl}/material/batchget_material?access_token=${setings.accessToken}`;
+            const reqBody = {
+				"type": type,
+				"offset":offset,
+				"count":count
+			};
+			const req: RequestUrlParam = {
+				url: url,
+				method: 'POST',
+				headers: this.getHeaders(),
+				body: JSON.stringify(reqBody)
+			};
+			const resp = await requestUrl(req);
+            const errorcode = resp.json["errcode"]
+            if ( errorcode !== 0 && errorcode !== undefined) {
+                new Notice(`Failed to sending all fees. errcode ${errorcode},` + resp.json["errmsg"]);
+				return
+            }
+			const respObj: BatchGetMaterial = JSON.parse(resp.text)
+			var frontmat: MDFrontMatterContent = new MDFrontMatterContent();
+			const nhm = new NodeHtmlMarkdown(
+				/* options (optional) */ {}, 
+				/* customTransformers (optional) */ undefined,
+				/* customCodeBlockTranslators (optional) */ undefined
+			);
+			if(type === "news") {
+				const objItems = respObj.item as NewsItem[]
+				if (objItems.length < 1) {
+					new Notice('No News Data from wechat public');
+				}
+				for (let i = 0; i < objItems.length; i++) {
+					const objItem = objItems[i];
+					const item = objItem.content.news_item[0]
+					const date = new Date(objItem.content.create_time * 1000);
+					const dateString = date.toISOString(); 	
+					
+					var contentMD = ""
+					var filePath = ""
+					var mdText = ""
+					frontmat.author = item.author
+					frontmat.create_time = dateString
+					frontmat.url = item.url
+					frontmat.media_id = objItem.media_id
+					frontmat.content_source_url = item.content_source_url
+					frontmat.thumb_media_id = item.thumb_media_id
+					frontmat.thumb_url =item.thumb_url
+					contentMD = nhm.translate(item.content);
+					filePath = `${setings.downloadFolder}/${item.title}.md`
+					mdText = this.makeArticleContent(frontmat, contentMD)
+					await this.app.vault.create(filePath, mdText);
+				}
+			} else {
+				const objItem = respObj.item as MediaItem[];
+				const extfile = this.getFileExtent(type)
+				if (extfile === "no") {
+					new Notice(`Not support type format ${type}`);
+					return;
+				}
+				for (let i = 0; i < objItem.length; i++) {
+					const item = objItem[i];
+					var filePath = ""
+					filePath = `${setings.downloadFolder}/${item.name}.${extfile}`
+					const resp = await requestUrl(item.url);
+					this.app.vault.createBinary(filePath, resp.arrayBuffer)
+				}
+			}
+			// console.log(respObj);
+			// return
+			new Notice(`Success batch Get Material`);
+			return;
+		} catch (e) {
+			new Notice(
+				'Failed to batch Get Material. Please check your appId, secret,parameter and try again.'
+			);
+			console.error('Get Material error' + e);
+		}
+	}
+
+	public makeArticleContent(frontMatter: MDFrontMatterContent, markdownContent: string) {
+		const frontMatterStr = stringifyYaml(frontMatter);
+		return '---\n' + frontMatterStr + '---\n' + markdownContent;
+	}
+
+	private getFileExtent(type: string): string {
+		if (type === "image") {
+			return "png"
+		} else if (type === "video") {
+			return "mp4"
+		} else if (type === "voice") {
+			return "webm"
+		} else {
+			return "no";
 		}
 	}
 }

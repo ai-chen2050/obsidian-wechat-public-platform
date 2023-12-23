@@ -18,10 +18,18 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ upload material on WeChatPublic ]【微信公众号上传素材】将资源图片、视频上传至微信公众号资源管理（等待黑曜石支持formdata体）
 - [ add draft on WeChatPublic ]【微信公众平台添加草稿】微信公众平台草稿箱添加图文资源
 - [ Release article on WeChatPublic ]【微信公众号发布文章】发布图文消息及各类资源并发布到微信公众平台
-- [ Send all fees on WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：需要认证有通话权限）
+- [ Send all fees on WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
 
-![commands](./public/commands.png)
-![uploadMateial](./public/uploadMateial.png)
+<br>
+
+---
+
+|    Overall    |    Down/Upload    |
+|:-----------:|:-----------:|
+| ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
+| ![commands](./public/commands.png)| ![download](./public/download.png) |
+
+---
 
 ## 安装
 
@@ -48,12 +56,23 @@ digest: ""
 - 文章封面：微信公众平台内部资源thumb_media_id优先级最高时，其次是网络图片banner，最后是黑曜石本地图片路径
 - 其他字段填写微信公众平台发表文章的相关信息。
 
+### AppId 和 Secret 秘钥用于调用微信公众平台接口
 
+- [登录](https://mp.weixin.qq.com/)腾讯微信服务器，进入设置和开发页面。
+- 并找到设置和开发页面的基本设置子页面。 将 appid 和 Secret 复制到插件设置中。
+
+＃＃＃ 白名单
+
+- 微信平台请求用户将客户端IP加入服务器白名单。 它与 API 密钥和秘密在同一页面。
+- 您可以在[此处](https://tool.lu/ip/)找到您的外网IP。
+- 如果你的网络ip是[192.168.66.66]，则输入ip [192.168.0.0/16]或[192.168.66.66], 因为有的 IP 可能会变动。
+  
 ## Wechat public API
 [Wechat API](./docs/wepublic.md)
 
 ## Support & Funding
 
+<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">
 <img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">
 
 <div align="right">

@@ -57,6 +57,63 @@ class WeChatUploadMaterialModal extends Modal {
     }
 }
 
+class WeChatDownloadMaterialModal extends Modal {
+    offset: string;
+    totalCount: string;
+    type: string;
+    onSubmit: (offset: string, type: string, totalCount: string) => void;
+  
+    constructor(app: App, onSubmit: (offset: string, type: string, totalCount: string) => void) {
+      super(app);
+      this.onSubmit = onSubmit;
+    }
+  
+    onOpen() {
+      const { contentEl } = this;
+  
+      contentEl.createEl("h1", { text: "Input Download Details" });
+  
+      new Setting(contentEl)
+        .setName("Type")
+        .setDesc("type: news, image, video, voice")
+        .addText((text) =>
+          text.onChange((value) => {
+            this.type = value
+          })); 
+
+      new Setting(contentEl)
+        .setName("Offset")
+        .setDesc("offset: start related last log")
+        .addText((text) =>
+          text.onChange((value) => {
+            this.offset = value
+          }));
+
+      new Setting(contentEl)
+        .setName("TotalCount")
+        .setDesc("totalCount: number,maximum 20")
+        .addText((text) =>
+          text.onChange((value) => {
+            this.totalCount = value
+          }));
+
+      new Setting(contentEl)
+        .addButton((btn) =>
+          btn
+            .setButtonText("Submit")
+            .setCta()
+            .onClick(() => {
+              this.close();
+              this.onSubmit(this.offset, this.type, this.totalCount);
+            }));
+    }
+  
+    onClose() {
+      let { contentEl } = this;
+      contentEl.empty();
+    }
+}
+
 // 打开某个文件
 class OpenFileModal extends Modal {
     input: HTMLInputElement;
@@ -135,21 +192,4 @@ class WarningModal extends Modal {
     }
 }
 
-class TestModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-		// contentEl.set
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
-export { OpenFileModal, WarningModal, TestModal, WeChatUploadMaterialModal };
+export { OpenFileModal, WarningModal, WeChatDownloadMaterialModal, WeChatUploadMaterialModal };

@@ -49,8 +49,8 @@ export default class ApiManager {
 		let res = "";
 		try {
 			res = juice.inlineContent(html, basicStyle + wechatFormat + codeStyle + "", {
-			inlinePseudoElements: true,
-			preserveImportant: true,
+				inlinePseudoElements: true,
+				preserveImportant: true,
 			});
 		} catch (e) {
 			new Notice("请检查 CSS 文件是否编写正确！");
@@ -178,7 +178,7 @@ export default class ApiManager {
 
 			const htmlText = await marked.parse(content)
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText +`</section>`)
-			// console.log(htmlText2);
+			// console.log(htmlText2.replace(/[\r\n]/g, ""));
 			// return
 			var thumb_media_id : string | undefined = ""
 			if( frontmatter["thumb_media_id"] !== undefined && frontmatter["thumb_media_id"] !== ""){
@@ -200,7 +200,7 @@ export default class ApiManager {
                 title: title,
                 author: frontmatter["author"],
                 digest: frontmatter["digest"],
-                content: htmlText2,
+                content: htmlText2.replace(/[\r\n]/g, ""),
                 content_source_url: frontmatter["source_url"],
                 thumb_media_id: thumb_media_id!,
                 need_open_comment: frontmatter["open_comment"],

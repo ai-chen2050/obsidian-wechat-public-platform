@@ -9,7 +9,7 @@ import juice from "juice";
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, MDFrontMatterContent, MediaItem, NewsItem } from './models';
-import { generateRandomString } from 'utils/cookiesUtil';
+import { chooseBoundary } from 'utils/cookiesUtil';
 export default class ApiManager {
 	app: App;
 
@@ -113,9 +113,9 @@ export default class ApiManager {
 				}
 			}
 
-			const boundary = generateRandomString(32)
+			const boundary = chooseBoundary()
 			console.log("boundary " + boundary);
-			const end_boundary = '\r\n' + boundary + '--\r\n';
+			const end_boundary = '\r\n--' + boundary + '--\r\n';
 			let formDataString = '';
 			formDataString += '--' + boundary + '\r\n';
 			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
@@ -123,24 +123,31 @@ export default class ApiManager {
 
 			var resultArray = [];
             for (var i = 0; i < formDataString.length; i++) { // 取出文本的charCode（10进制）
-               resultArray.push(formDataString.charCodeAt(i));
+				resultArray.push(formDataString.charCodeAt(i));
             }
+			// console.log(`arrlen=${resultArray.length},${formDataString}`);
+			// console.log(`picBloblen=${blobBytes!.byteLength},${blobBytes!.slice(0, 20)}`);
 			
 			if (blobBytes !== null) {
 				var pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
 				var endBoundaryArray = [];
 				for (var i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
-				endBoundaryArray.push(end_boundary.charCodeAt(i));
+					endBoundaryArray.push(end_boundary.charCodeAt(i));
 				}
+				// console.log(`endBoudlen2=${endBoundaryArray.length},${endBoundaryArray}`);
 				var postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
 				var post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
+				// console.log(post_typedArray)
 
 				const url = `${this.baseUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
-				var header = {
+				const header = {
 					'Content-Type': 'multipart/form-data; boundary=' + boundary,
 					'Accept-Encoding': 'gzip, deflate, br',
-					'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+					'Accept': '*/*', 
+					'Connection': 'keep-alive',
+					// 'Content-Length': post_typedArray.length.toString()
 				}; 
+				// console.log(header);
 				// return
 				const req: RequestUrlParam = {
 					url: url,

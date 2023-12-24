@@ -1,4 +1,5 @@
 import { Cookie } from 'set-cookie-parser';
+import * as crypto from "crypto";
 
 export const parseCookies = (cookieInput: string): Cookie[] => {
 	if (cookieInput === '') {
@@ -28,7 +29,7 @@ export const getCookieString = (cookies: Cookie[]): string => {
 };
 
 export const generateRandomString = (length: number): string => {
-	const characters = 'ijklmnopqrstuvabcdefghijklmnopqrstuvwxyz0123456789';
+	const characters = 'ijklmnopqrstuvabcdefghijklmnopqrstuvwxyz123456789';
 	let randomString = '';
   
 	for (let i = 0; i < length; i++) {
@@ -37,4 +38,9 @@ export const generateRandomString = (length: number): string => {
 	}
   
 	return randomString;
-  }
+}
+
+export const chooseBoundary = (): string => {
+  const boundary = crypto.randomBytes(16).toString("hex");
+  return boundary;
+}

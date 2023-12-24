@@ -3,7 +3,7 @@ import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
-import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal } from 'src/showModals';
+import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal } from 'src/showModals';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -77,7 +77,7 @@ export default class WeChatPublic extends Plugin {
 			id: 'upload-material-on-wechatpublic',
 			name: 'upload material on WeChatPublic.【 wait support Formdata 】',
 			callback: async () => {
-				new WeChatUploadMaterialModal(this.app,async (path, type, name) => {
+				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
                     console.log(path, type, name);
 					if (path === "" || type === "") {
 						new Notice('Please input correct material details!');
@@ -105,6 +105,20 @@ export default class WeChatPublic extends Plugin {
 				return
 			}
 		});
+
+				
+		// this.addCommand({
+		// 	id: 'slect-on-wechatpublic',
+		// 	name: 'slect on WeChatPublic',
+		// 	editorCallback: async (editor: Editor, view: MarkdownView) => {
+		// 		const file = view.file
+		// 		const basename = file?.basename
+
+		// 		const cache = this.app.metadataCache.getFileCache(file!);
+				
+		// 		return
+		// 	}
+		// });
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new WeChatPublicSettingTab(this.app, this, apiManager));

@@ -65,3 +65,21 @@ export class MDFrontMatterContent {
     thumb_media_id:        string;
     thumb_url:             string;
 };
+
+export class CoverInfo {
+    mediaID: string
+    mediaName: string
+  
+    constructor(mediaid: string, mediaName: string) {
+      this.mediaID = mediaid
+      this.mediaName = mediaName
+    }
+}
+
+export class CoverInfos {
+    contents: CoverInfo[]
+
+    // add(cover: CoverInfo) {
+    //     this.contents.
+    // }
+}

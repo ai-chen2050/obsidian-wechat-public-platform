@@ -1,4 +1,5 @@
-import { App, Modal, Setting, AbstractInputSuggest, SuggestModal} from "obsidian";
+import { App, Modal, Setting, AbstractInputSuggest, Menu, SuggestModal, TFile} from "obsidian";
+import { CoverInfo } from "./models";
 class WeChatUploadMaterialModal extends Modal {
     path: string;
     name: string;
@@ -191,6 +192,110 @@ class WarningModal extends Modal {
     }
 }
 
+class CoverIDSuggestModal extends SuggestModal<CoverInfo> {
+  content: CoverInfo[];
+	query: string;
+  onSubmit: (cover: CoverInfo) => void;
+
+  constructor(app: App, content: CoverInfo[],onSubmit: (cover: CoverInfo) => void, limit: number = 20) {
+		super(app);
+		this.query = "";
+		this.limit = limit;
+    this.content = content;
+    this.onSubmit = onSubmit;
+		this.setPlaceholder("请从素材库选择文章封面图片......");
+	}
+
+	queryCover(contents: CoverInfo[], query: string, res: CoverInfo[]) {
+		for (var i = 0; i < contents.length; i++) {
+      const content = contents[i];
+			if (content.mediaName.indexOf(query) >= 0) {
+					res.push(content);
+			}
+      if (res.length >= this.limit) {
+        return true;
+      }
+		}
+
+		return false;
+	}
+
+	getSuggestions(query: string): CoverInfo[] {
+		this.query = query;
+		const res: CoverInfo[] = [];
+		this.queryCover(this.content, query, res);
+		
+		return res;
+	}
+
+	renderSuggestion(cover: CoverInfo, el: HTMLElement) {
+		const title = cover.mediaName;
+        
+    if (this.query) {
+        el.innerHTML = title.replace(RegExp(`(${this.query})`,'g'),`<span class="suggestion-highlight">pic: $1</span>`);
+        el.createDiv({text:"id: " + cover.mediaID.substring(0, 30),cls:"suggestion-note"});
+    } else {
+        el.createSpan({text:"pic: " + title});
+        el.createDiv({text:"id: " + cover.mediaID.substring(0, 30),cls:"suggestion-note"});
+    }
+        
+	}
+
+	onChooseSuggestion(item: CoverInfo, evt: MouseEvent | KeyboardEvent) {
+			this.onSubmit(item);
+	}
+}
+
+class FileSuggestModal extends SuggestModal<TFile> {
+  content: TFile[];
+	query: string;
+  onSubmit: (mdFile: TFile) => void;
+
+  constructor(app: App, content: TFile[], onSubmit: (mdFile: TFile) => void) {
+		super(app);
+		this.query = "";
+    this.content = content;
+    this.onSubmit = onSubmit;
+		this.setPlaceholder("请选择要发送的文章......");
+	}
+
+	querymdFile(contents: TFile[], query: string, res: TFile[]) {
+		for (var i = 0; i < contents.length; i++) {
+      const content = contents[i];
+			if (content.basename .indexOf(query) >= 0) {
+					res.push(content);
+			}
+		}
+
+		return false;
+	}
+
+	getSuggestions(query: string): TFile[] {
+		this.query = query;
+		const res: TFile[] = [];
+		this.querymdFile(this.content, query, res);
+		
+		return res;
+	}
+
+	renderSuggestion(mdFile: TFile, el: HTMLElement) {
+		const title = mdFile.name;
+        
+    if (this.query) {
+        el.innerHTML = title.replace(RegExp(`(${this.query})`,'g'),`<span class="suggestion-highlight">title: $1</span>`);
+        el.createDiv({text:"path: " + mdFile.path,cls:"suggestion-note"});
+    } else {
+        el.createSpan({text:"title: " +  title});
+        el.createDiv({text:"path: " + mdFile.path,cls:"suggestion-note"});
+    }
+        
+	}
+
+	onChooseSuggestion(item: TFile, evt: MouseEvent | KeyboardEvent) {
+			this.onSubmit(item);
+	}
+}
+
 class MultiSuggest extends AbstractInputSuggest<string> {
   content: Set<string>;
 
@@ -218,4 +323,4 @@ class MultiSuggest extends AbstractInputSuggest<string> {
   }
 }
 
-export { OpenFileModal, WarningModal, WeChatDownloadMaterialModal, WeChatUploadMaterialModal, MultiSuggest };
+export { OpenFileModal, WarningModal, WeChatDownloadMaterialModal, WeChatUploadMaterialModal, CoverIDSuggestModal, FileSuggestModal, MultiSuggest };

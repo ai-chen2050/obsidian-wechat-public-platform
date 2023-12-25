@@ -1,9 +1,10 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, Setting, TFile, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, Setting, TFile, addIcon, requestUrl } from 'obsidian';
 import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
-import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal } from 'src/showModals';
+import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal, CoverIDSuggestModal, FileSuggestModal } from 'src/showModals';
+import { CoverInfo } from 'src/models';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -22,10 +23,25 @@ export default class WeChatPublic extends Plugin {
 		this.frontManager = new FrontMatterManager(this.app);
 		const apiManager = new ApiManager(this.app);
 
-		// const ribbonIconEl = this.addRibbonIcon('dice', 'Wechat Public', (evt: MouseEvent) => {
-		// 	new Notice('This is a notice!');
-		// });
-		// ribbonIconEl.addClass('my-plugin-ribbon-class');
+		const ribbonIconEl = this.addRibbonIcon("send", '发布到草稿箱', (evt: MouseEvent) => {
+			new FileSuggestModal(this.app, this.app.vault.getMarkdownFiles(), async (file: TFile) => {
+				const text = await this.frontManager.removeFrontMatter(file)
+				const cache = this.app.metadataCache.getFileCache(file);
+				if (cache?.frontmatter!["thumb_media_id"] === undefined) {
+					const covers = await apiManager.getArticleCover()
+					if (covers === undefined) {
+						return
+					}
+					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
+						await apiManager.newDraft(file.basename, text, cache?.frontmatter!, cover.mediaID);
+					}).open();
+					return
+				} else {
+					await apiManager.newDraft(file.basename, text, cache?.frontmatter!)
+				}
+			}).open();
+		});
+		ribbonIconEl.addClass('wechat-pblic-ribbon-class');
 
 		this.addCommand({
 			id: 'send-all-fees-on-wechatpublic',
@@ -34,12 +50,8 @@ export default class WeChatPublic extends Plugin {
 				const file = view.file
 				const basename = file?.basename
 				const text = await this.frontManager.removeFrontMatter(file!)
-
 				const cache = this.app.metadataCache.getFileCache(file!);
-				// for debuging
-				// if (cache?.frontmatter){
-				// 	console.log(cache?.frontmatter)
-				// }
+				
 				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
 				await apiManager.sendAll(media_id!)
 			}
@@ -67,9 +79,21 @@ export default class WeChatPublic extends Plugin {
 				const basename = file?.basename
 				const text = await this.frontManager.removeFrontMatter(file!)
 				// console.log(text);
-
 				const cache = this.app.metadataCache.getFileCache(file!);
-				await apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				
+				// for temporary, only thumb_media_id can works
+				if (cache?.frontmatter!["thumb_media_id"] === undefined) {
+					const covers = await apiManager.getArticleCover()
+					if (covers === undefined) {
+						return
+					}
+					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
+						await apiManager.newDraft(basename!, text, cache?.frontmatter!, cover.mediaID);
+					}).open();
+					return
+				} else {
+					await apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				}
 			}
 		});
 
@@ -105,20 +129,6 @@ export default class WeChatPublic extends Plugin {
 				return
 			}
 		});
-
-				
-		// this.addCommand({
-		// 	id: 'slect-on-wechatpublic',
-		// 	name: 'slect on WeChatPublic',
-		// 	editorCallback: async (editor: Editor, view: MarkdownView) => {
-		// 		const file = view.file
-		// 		const basename = file?.basename
-
-		// 		const cache = this.app.metadataCache.getFileCache(file!);
-				
-		// 		return
-		// 	}
-		// });
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new WeChatPublicSettingTab(this.app, this, apiManager));

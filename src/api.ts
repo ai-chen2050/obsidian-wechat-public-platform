@@ -1,4 +1,4 @@
-import { Notice, requestUrl, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml } from 'obsidian';
+import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml } from 'obsidian';
 import { settingsStore } from './settings';
 import { get } from 'svelte/store';
 import {marked} from 'marked'
@@ -8,8 +8,9 @@ import {codeStyle} from './style/codeStyle';
 import juice from "juice";
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
-import { ArticleElement, Articles, BatchGetMaterial, MDFrontMatterContent, MediaItem, NewsItem } from './models';
+import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
 import { chooseBoundary } from 'utils/cookiesUtil';
+
 export default class ApiManager {
 	app: App;
 
@@ -141,6 +142,7 @@ export default class ApiManager {
 
 				const url = `${this.baseUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
 				const header = {
+					// 'User-Agent': 'python-requests/2.28.1',
 					'Content-Type': 'multipart/form-data; boundary=' + boundary,
 					'Accept-Encoding': 'gzip, deflate, br',
 					'Accept': '*/*', 
@@ -175,7 +177,7 @@ export default class ApiManager {
 		}
 	}
 
-	async newDraft(title: string, content: string, frontmatter: FrontMatterCache): Promise<string |undefined> {
+	async newDraft(title: string, content: string, frontmatter: FrontMatterCache, only_id: string = ""): Promise<string |undefined> {
         try {
             const setings = get(settingsStore)
             const pass = await this.refreshAccessToken(setings.appid, setings.secret)
@@ -188,15 +190,20 @@ export default class ApiManager {
 			// console.log(htmlText2.replace(/[\r\n]/g, ""));
 			// return
 			var thumb_media_id : string | undefined = ""
-			if( frontmatter["thumb_media_id"] !== undefined && frontmatter["thumb_media_id"] !== ""){
-				thumb_media_id = frontmatter["thumb_media_id"]
-			} else {
-				if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
-					thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"-banner.png");
-				} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
-					thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"-banner.png");
+			if (only_id === "") {
+				if( frontmatter["thumb_media_id"] !== undefined && frontmatter["thumb_media_id"] !== ""){
+					thumb_media_id = frontmatter["thumb_media_id"]
+				} else {
+					if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
+						thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"-banner.png");
+					} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
+						thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"-banner.png");
+					}
 				}
+			} else {
+				thumb_media_id = only_id;
 			}
+
 			if (thumb_media_id === "") {
 				new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
 				return
@@ -340,7 +347,7 @@ export default class ApiManager {
 			const resp = await requestUrl(req);
             const errorcode = resp.json["errcode"]
             if ( errorcode !== 0 && errorcode !== undefined) {
-                new Notice(`Failed to sending all fees. errcode ${errorcode},` + resp.json["errmsg"]);
+                new Notice(`Batch Get Material failed. errcode ${errorcode},` + resp.json["errmsg"]);
 				return
             }
 			const respObj: BatchGetMaterial = JSON.parse(resp.text)
@@ -398,6 +405,49 @@ export default class ApiManager {
 		} catch (e) {
 			new Notice(
 				'Failed to batch Get Material. Please check your appId, secret,parameter and try again.'
+			);
+			console.error('Get Material error' + e);
+		}
+	}
+
+	async getArticleCover(): Promise< CoverInfo[] | undefined> {
+		try {
+			const setings = get(settingsStore)
+			const pass = await this.refreshAccessToken(setings.appid, setings.secret)
+			if (pass === false) {
+				return undefined
+			}
+	
+			const url = `${this.baseUrl}/material/batchget_material?access_token=${setings.accessToken}`;
+			const reqBody = {
+				"type": "image",
+				"offset":0,
+				"count":20
+			};
+			const req: RequestUrlParam = {
+				url: url,
+				method: 'POST',
+				headers: this.getHeaders(),
+				body: JSON.stringify(reqBody)
+			};
+			const resp = await requestUrl(req);
+			const errorcode = resp.json["errcode"]
+			if ( errorcode !== 0 && errorcode !== undefined) {
+				new Notice(`get Article Cover failed. errcode ${errorcode},` + resp.json["errmsg"]);
+				return undefined
+			}
+			console.log(resp.text);
+			const respObj: BatchGetMaterial = JSON.parse(resp.text)
+			var images:CoverInfo[] = [];
+			const objItems = respObj.item as MediaItem[]
+			for (let i = 0; i < objItems.length; i++) {
+				const img = objItems[i];
+				images.push(new CoverInfo(img.media_id, img.name));
+			}
+			return images
+		} catch (e) {
+			new Notice(
+				'Failed to get Article Cover. Please check your appId, secret,parameter and try again.'
 			);
 			console.error('Get Material error' + e);
 		}

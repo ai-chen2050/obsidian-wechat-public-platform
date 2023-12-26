@@ -6,9 +6,21 @@
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 
-[ZH 中文](./README-zh.md)
+[ZH 中文](./README-zh.md) 
+
 
 The Obsidian WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
+
+
+## Video Walkthrough
+
+- Chinese Video Display 中文视频演示请点击下面图片
+<br>
+
+- <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4">
+  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="300" height="200">
+</a>
+
 
 ## Release history
 https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases

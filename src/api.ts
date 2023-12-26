@@ -210,7 +210,7 @@ export default class ApiManager {
 				thumb_media_id = only_id;
 			}
 
-			if (thumb_media_id === "") {
+			if (thumb_media_id === "" && frontmatter["banner"] === undefined && frontmatter["banner_path"] === undefined) {
 				new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
 				return
 			}

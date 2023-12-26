@@ -82,9 +82,6 @@ digest: ""
 |<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">|<img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">|
 
 
-
-
-
 <div align="right">
 <a href="https://www.buymeacoffee.com/blakechan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 140px !important;" ></a>
 </div>

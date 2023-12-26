@@ -63,7 +63,7 @@ digest: ""
 - [登录](https://mp.weixin.qq.com/)腾讯微信服务器，进入设置和开发页面。
 - 并找到设置和开发页面的基本设置子页面。 将 appid 和 Secret 复制到插件设置中。
 
-＃＃＃ 白名单
+### 白名单
 
 - 微信平台请求用户将客户端IP加入服务器白名单。 它与 API 密钥和秘密在同一页面。
 - 您可以在[此处](https://tool.lu/ip/)找到您的外网IP。
@@ -74,8 +74,11 @@ digest: ""
 
 ## Support & Funding
 
-<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">
-<img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">
+
+| Halo | World |
+|:-----------:|:-----------:|
+|<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">|<img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">|
+
 
 <div align="right">
 <a href="https://www.buymeacoffee.com/blakechan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 140px !important;" ></a>

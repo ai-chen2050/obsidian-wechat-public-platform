@@ -6,6 +6,7 @@ import { basicStyle } from './style/basicStyle';
 import {wechatFormat} from './style/wechatFormat';
 import {codeStyle} from './style/codeStyle';
 import juice from "juice";
+import * as mime from 'mime-types';
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
@@ -107,55 +108,57 @@ export default class ApiManager {
 					const data = await this.app.vault.readBinary(imgfile);
 					blobBytes = data
 				} else {
-					new Notice(
-						'Please input correct file relative path in obsidian'
-					);
+					new Notice('Please input correct file relative path in obsidian');
 					return
-				}
+				}				
 			}
 
 			const boundary = chooseBoundary()
-			console.log("boundary " + boundary);
 			const end_boundary = '\r\n--' + boundary + '--\r\n';
 			let formDataString = '';
 			formDataString += '--' + boundary + '\r\n';
-			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
-			formDataString += 'Content-Type: image/png' + '\r\n\r\n';
-
-			var resultArray = [];
-            for (var i = 0; i < formDataString.length; i++) { // 取出文本的charCode（10进制）
-				resultArray.push(formDataString.charCodeAt(i));
-            }
-			// console.log(`arrlen=${resultArray.length},${formDataString}`);
-			// console.log(`picBloblen=${blobBytes!.byteLength},${blobBytes!.slice(0, 20)}`);
+			const exts = this.getFileExtent(fileType)
+			if (exts === "no") {
+				new Notice('Not Support, Only supplied type image,video,voice,thumb');
+				return
+			}
+			if (fileType === "video") {
+				formDataString += `Content-Disposition: form-data; name="description"` + '\r\n\r\n';
+				formDataString += `\{"title":\"${fileName}\", "introduction":"from ob wechat"\}` + '\r\n';
+				formDataString += '--' + boundary + '\r\n';
+			}
 			
+			const contentType = mime.contentType(path);
+			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.${exts}\"` + '\r\n';
+			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
+
+			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
+			var resultArray = Array.from(formDatabuffer);
+			// console.log(formDataString);
+			// return
 			if (blobBytes !== null) {
 				var pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
 				var endBoundaryArray = [];
 				for (var i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
 					endBoundaryArray.push(end_boundary.charCodeAt(i));
 				}
-				// console.log(`endBoudlen2=${endBoundaryArray.length},${endBoundaryArray}`);
 				var postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
 				var post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
 				// console.log(post_typedArray)
 
 				const url = `${this.baseUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
 				const header = {
-					// 'User-Agent': 'python-requests/2.28.1',
 					'Content-Type': 'multipart/form-data; boundary=' + boundary,
 					'Accept-Encoding': 'gzip, deflate, br',
 					'Accept': '*/*', 
 					'Connection': 'keep-alive',
-					// 'Content-Length': post_typedArray.length.toString()
 				}; 
-				// console.log(header);
-				// return
+
 				const req: RequestUrlParam = {
 					url: url,
 					method: 'POST',
 					headers: header,
-					body: post_typedArray,
+					body: post_typedArray.buffer,
 				};
 				const resp = await requestUrl(req);
 				const media_id = resp.json["media_id"];
@@ -164,7 +167,9 @@ export default class ApiManager {
 					const errmsg = resp.json["errmsg"];
 					console.log(errmsg);
 					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
+					return
 				}
+				new Notice(`Success Upload Material media_id ${media_id}.`);
 				return media_id
 			} else {
 				throw new Error('resrouce is empty,blobBytes, Failed to upload Material');
@@ -185,9 +190,10 @@ export default class ApiManager {
 				return
 			}
 
-			const htmlText = await marked.parse(content)
+			const MdImagedContent = await this.handleMDImage(content)
+			const htmlText = await marked.parse(MdImagedContent)
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText +`</section>`)
-			// console.log(htmlText2.replace(/[\r\n]/g, ""));
+			// console.log(htmlText2);
 			// return
 			var thumb_media_id : string | undefined = ""
 			if (only_id === "") {
@@ -195,9 +201,9 @@ export default class ApiManager {
 					thumb_media_id = frontmatter["thumb_media_id"]
 				} else {
 					if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
-						thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"-banner.png");
+						thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"_banner");
 					} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
-						thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"-banner.png");
+						thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"_banner");
 					}
 				}
 			} else {
@@ -236,6 +242,7 @@ export default class ApiManager {
 				const errmsg = resp.json["errmsg"];
 				console.log(errmsg);
 				new Notice(`newDraft, errorCode: ${errcode}, errmsg: ${errmsg}`);
+				return
 			}
 			new Notice(`Success New draft media_id ${media_id}.`);
 			return media_id
@@ -452,6 +459,105 @@ export default class ApiManager {
 			console.error('Get Material error' + e);
 		}
 	}
+	async handleMDImage(content: string): Promise<string> {
+		const imageRegex = /!\[.*?\]\((.*?)\)/g;
+		const matches = Array.from(content.matchAll(imageRegex));
+		const promises = matches.map(async (match) => {
+			const imagePath = match[1];
+			const responseUrl = await this.uploadImage(imagePath, "");
+			return {
+				match,
+				responseUrl
+			};
+		});
+
+		const replacements = await Promise.all(promises);
+		let parsedContent = content;
+		for (const { match, responseUrl } of replacements) {
+			const [fullMatch, imagePath] = match;
+			parsedContent = parsedContent.replace(fullMatch, `![image](${responseUrl})`);
+		}
+
+		// console.log(parsedContent);
+		return parsedContent
+	}
+	async uploadImage(path: string, fileName: string): Promise<string |undefined> {
+        try {
+			const setings = get(settingsStore)
+
+			var blobBytes: ArrayBuffer | null = null;
+			if (path.startsWith("http")) {
+				const imgresp = await requestUrl(path);
+				blobBytes = imgresp.arrayBuffer
+			} else {
+				const imgfile = this.app.vault.getAbstractFileByPath(path);
+				if (imgfile instanceof TFile) {
+					const data = await this.app.vault.readBinary(imgfile);
+					blobBytes = data
+				} else {
+					new Notice('Please input correct file relative path in obsidian');
+					return
+				}				
+			}
+
+			const boundary = chooseBoundary()
+			const end_boundary = '\r\n--' + boundary + '--\r\n';
+			let formDataString = '';
+			formDataString += '--' + boundary + '\r\n';
+			
+			const contentType = mime.contentType(path);
+			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
+			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
+
+			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
+			var resultArray = Array.from(formDatabuffer);
+			// console.log(formDataString);
+			// return
+			if (blobBytes !== null) {
+				var pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
+				var endBoundaryArray = [];
+				for (var i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
+					endBoundaryArray.push(end_boundary.charCodeAt(i));
+				}
+				var postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
+				var post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
+				// console.log(post_typedArray)
+
+				const url = `${this.baseUrl}/media/uploadimg?access_token=${setings.accessToken}`;
+				const header = {
+					'Content-Type': 'multipart/form-data; boundary=' + boundary,
+					'Accept-Encoding': 'gzip, deflate, br',
+					'Accept': '*/*', 
+					'Connection': 'keep-alive',
+				}; 
+
+				const req: RequestUrlParam = {
+					url: url,
+					method: 'POST',
+					headers: header,
+					body: post_typedArray.buffer,
+				};
+				const resp = await requestUrl(req);
+				const media_id = resp.json["url"];
+				if (media_id === undefined) {
+					const errcode = resp.json["errcode"];
+					const errmsg = resp.json["errmsg"];
+					console.log(errmsg);
+					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
+					return
+				}
+				new Notice(`Success upload Image url ${media_id}.`);
+				return media_id
+			} else {
+				// throw new Error('resrouce is empty,blobBytes, Failed to upload image');
+			}
+		} catch (e) {
+			new Notice(
+				'Failed to upload image'
+			);
+			console.error('upload image error' + e);
+		}
+	}
 
 	public makeArticleContent(frontMatter: MDFrontMatterContent, markdownContent: string) {
 		const frontMatterStr = stringifyYaml(frontMatter);
@@ -465,6 +571,8 @@ export default class ApiManager {
 			return "mp4"
 		} else if (type === "voice") {
 			return "webm"
+		} else if (type === "thumb") {
+			return "jpg"
 		} else {
 			return "no";
 		}

@@ -27,7 +27,9 @@ export default class WeChatPublic extends Plugin {
 			new FileSuggestModal(this.app, this.app.vault.getMarkdownFiles(), async (file: TFile) => {
 				const text = await this.frontManager.removeFrontMatter(file)
 				const cache = this.app.metadataCache.getFileCache(file);
-				if (cache?.frontmatter!["thumb_media_id"] === undefined) {
+				if (cache?.frontmatter!["thumb_media_id"] === undefined && 
+						cache?.frontmatter!["banner"] === undefined &&
+							cache?.frontmatter!["banner_path"] === undefined) {
 					const covers = await apiManager.getArticleCover()
 					if (covers === undefined) {
 						return
@@ -81,8 +83,9 @@ export default class WeChatPublic extends Plugin {
 				// console.log(text);
 				const cache = this.app.metadataCache.getFileCache(file!);
 				
-				// for temporary, only thumb_media_id can works
-				if (cache?.frontmatter!["thumb_media_id"] === undefined) {
+				if (cache?.frontmatter!["thumb_media_id"] === undefined && 
+						cache?.frontmatter!["banner"] === undefined &&
+							cache?.frontmatter!["banner_path"] === undefined) {
 					const covers = await apiManager.getArticleCover()
 					if (covers === undefined) {
 						return

@@ -26,7 +26,7 @@ class WeChatUploadMaterialModal extends Modal {
 
       new Setting(contentEl)
         .setName("Type")
-        .setDesc("fileType: image, audio, video")
+        .setDesc("fileType: image, voice, video, thumb")
         .addText((text) =>
           text.onChange((value) => {
             this.name = value

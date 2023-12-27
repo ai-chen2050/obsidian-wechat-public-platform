@@ -20,7 +20,7 @@ export default class ApiManager {
     }
 
 	readonly baseUrl: string = 'https://api.weixin.qq.com/cgi-bin';
-    readonly expireDuration : number = 7200;   // seconds
+    readonly expireDuration : number = 7200 * 1000;   // millisecond
 
 	private getHeaders() {
 		return {

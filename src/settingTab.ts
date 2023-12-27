@@ -8,7 +8,7 @@ import pickBy from 'lodash.pickby';
 export class WeChatPublicSettingTab extends PluginSettingTab {
 	plugin: WeChatPublic;
 	private apiManager: ApiManager;
-	readonly expireDuration : number = 7200;   // seconds
+	readonly expireDuration : number = 7200 * 1000;   // seconds
 
 	constructor(app: App, plugin: WeChatPublic, apiManeger: ApiManager) {
 		super(app, plugin);

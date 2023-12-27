@@ -20,7 +20,7 @@ export default class ApiManager {
     }
 
 	readonly baseUrl: string = 'https://api.weixin.qq.com/cgi-bin';
-    readonly expireDuration : number = 7200 * 1000;   // millisecond
+    readonly expireDuration : number = 7200;
 
 	private getHeaders() {
 		return {
@@ -400,7 +400,7 @@ export default class ApiManager {
 				for (let i = 0; i < objItem.length; i++) {
 					const item = objItem[i];
 					var filePath = ""
-					filePath = `${setings.downloadFolder}/${item.name}.${extfile}`
+					filePath = `${setings.downloadFolder}/${item.name}`
 					const resp = await requestUrl(item.url);
 					this.app.vault.createBinary(filePath, resp.arrayBuffer)
 				}
@@ -460,7 +460,7 @@ export default class ApiManager {
 		}
 	}
 	async handleMDImage(content: string): Promise<string> {
-		const imageRegex = /!\[.*?\]\((.*?)\)/g;
+		const imageRegex = /!\[.*?\]\((.*?)\)/g;	// for ![]()
 		const matches = Array.from(content.matchAll(imageRegex));
 		const promises = matches.map(async (match) => {
 			const imagePath = match[1];
@@ -471,9 +471,27 @@ export default class ApiManager {
 			};
 		});
 
-		const replacements = await Promise.all(promises);
+		const regex = /!\[\[(.*?)\]\]/g;	// for ![[]]
+		const matches2 = Array.from(content.matchAll(regex));
+		const promises2 = matches2.map(async (match) => {
+			const imagePath = match[1];
+			const imgfile: TFile | undefined = this.app.vault.getFiles().find((value) => value.name === imagePath);
+			const responseUrl = await this.uploadImage(imgfile?.path!, "");
+			return {
+				match,
+				responseUrl
+			};
+		});
+
 		let parsedContent = content;
+		const replacements = await Promise.all(promises);
 		for (const { match, responseUrl } of replacements) {
+			const [fullMatch, imagePath] = match;
+			parsedContent = parsedContent.replace(fullMatch, `![image](${responseUrl})`);
+		}
+
+		const replacements2 = await Promise.all(promises2);
+		for (const { match, responseUrl } of replacements2) {
 			const [fullMatch, imagePath] = match;
 			parsedContent = parsedContent.replace(fullMatch, `![image](${responseUrl})`);
 		}
@@ -484,6 +502,10 @@ export default class ApiManager {
 	async uploadImage(path: string, fileName: string): Promise<string |undefined> {
         try {
 			const setings = get(settingsStore)
+			const pass = await this.refreshAccessToken(setings.appid, setings.secret)
+			if (pass === false) {
+				return undefined
+			}
 
 			var blobBytes: ArrayBuffer | null = null;
 			if (path.startsWith("http")) {

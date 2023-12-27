@@ -9,7 +9,7 @@
 [ZH 中文](./README-zh.md) 
 
 
-The Obsidian WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
+The [Obsidian](https://obsidian.md/) WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
 
 
 ## Video Walkthrough

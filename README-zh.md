@@ -10,6 +10,17 @@
 
 黑曜石微信公众平台插件是黑曜石社区插件，用于将黑曜石中的文章或视频等资源发布到微信公众号。
 
+## 中文演示视频
+
+- 中文视频演示请点击下面图片
+<br>
+
+- <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4">
+  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="300" height="200">
+</a>
+
+
+
 ## 发布历史
 https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 

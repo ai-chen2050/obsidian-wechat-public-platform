@@ -18,7 +18,7 @@ The Obsidian WeChat public platform plug-in is an obsidian community plug-in tha
 <br>
 
 - <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4">
-  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="300" height="200">
+  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250">
 </a>
 
 

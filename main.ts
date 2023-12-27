@@ -102,7 +102,7 @@ export default class WeChatPublic extends Plugin {
 
 		this.addCommand({
 			id: 'upload-material-on-wechatpublic',
-			name: 'upload material on WeChatPublic.【 wait support Formdata 】',
+			name: 'upload material on WeChatPublic.',
 			callback: async () => {
 				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
                     console.log(path, type, name);

@@ -27,10 +27,10 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 
 ## Functions & Command
 
-- [ upload material on WeChatPublic ] Upload resource pictures and videos to WeChat public account resource management (waiting for obsidian to support formdata body)
-- [ add draft on WeChatPublic ] Add graphic and text resources to the draft box of WeChat public platform
-- [ Release article on WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
-- [ Send all fans on WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
+- [ upload material to WeChatPublic ] Upload resource pictures and videos to WeChat public account resource management (waiting for obsidian to support formdata body)
+- [ add draft to WeChatPublic ] Add graphic and text resources to the draft box of WeChat public platform
+- [ Release article to WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
+- [ Send all fans to WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
 - [download-material-from-wechatpublic] download material(news,image,video,audio) from wechat public platform
 
 <br>

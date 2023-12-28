@@ -46,8 +46,8 @@ export default class WeChatPublic extends Plugin {
 		ribbonIconEl.addClass('wechat-pblic-ribbon-class');
 
 		this.addCommand({
-			id: 'send-all-fees-on-wechatpublic',
-			name: 'Send all fees on WeChatPublic【 normal account one shot a day 】',
+			id: 'send-all-fans-by-wechatpublic-plugin',
+			name: 'Send to all fans by WeChatPublic plugin【 normal account one shot a day 】',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -60,8 +60,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'release-article-on-wechatpublic',
-			name: 'Release article on WeChatPublic',
+			id: 'release-article-by-wechatpublic-plugin',
+			name: 'Release article by WeChatPublic plugin',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -74,8 +74,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'add-draft-on-wechatpublic',
-			name: 'add draft on WeChatPublic',
+			id: 'add-draft-by-wechatpublic-plugin',
+			name: 'add draft by WeChatPublic plugin',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -101,8 +101,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'upload-material-on-wechatpublic',
-			name: 'upload material on WeChatPublic.',
+			id: 'upload-material-by-wechatpublic-plugin',
+			name: 'upload material by WeChatPublic plugin.',
 			callback: async () => {
 				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
                     console.log(path, type, name);

@@ -30,7 +30,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ upload material on WeChatPublic ] Upload resource pictures and videos to WeChat public account resource management (waiting for obsidian to support formdata body)
 - [ add draft on WeChatPublic ] Add graphic and text resources to the draft box of WeChat public platform
 - [ Release article on WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
-- [ Send all fees on WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
+- [ Send all fans on WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
 - [download-material-from-wechatpublic] download material(news,image,video,audio) from wechat public platform
 
 <br>

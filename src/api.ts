@@ -288,7 +288,7 @@ export default class ApiManager {
 		}
 	}
 
-	// group send push article to fees
+	// group send push article to fans
 	async sendAll(media_id: string): Promise<string |undefined> {
         try {
             const setings = get(settingsStore)
@@ -318,16 +318,16 @@ export default class ApiManager {
 			const resp = await requestUrl(req);
             const errorcode = resp.json["errcode"]
             if ( errorcode !== 0 && errorcode !== undefined) {
-                new Notice(`Failed to sending all fees. errcode ${errorcode},` + resp.json["errmsg"]);
+                new Notice(`Failed to sending all fans. errcode ${errorcode},` + resp.json["errmsg"]);
 				return
             }
 			new Notice(`Success Release msg_data_id ${resp.json["msg_data_id"]}.`);
 			return resp.json["msg_data_id"];
 		} catch (e) {
 			new Notice(
-				'Failed to sending all fees. Please check your appId, secret and try again.'
+				'Failed to sending all fans. Please check your appId, secret and try again.'
 			);
-			console.error('send all fees error' + e);
+			console.error('send all fans error' + e);
 		}
 	}
 

@@ -29,7 +29,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ upload material on WeChatPublic ]【微信公众号上传素材】将资源图片、视频上传至微信公众号资源管理（等待黑曜石支持formdata体）
 - [ add draft on WeChatPublic ]【微信公众平台添加草稿】微信公众平台草稿箱添加图文资源
 - [ Release article on WeChatPublic ]【微信公众号发布文章】发布图文消息及各类资源并发布到微信公众平台
-- [ Send all fees on WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
+- [ Send all fans on WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
 
 <br>
 

@@ -2,7 +2,7 @@
 
 [![](https://github.com/ai-chen2050/obsidian-wechat-public-platform/actions/workflows/CI.yml/badge.svg)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/actions/workflows/CI.yml)
 [![Release Obsidian plugin](https://github.com/ai-chen2050/obsidian-wechat-public-platform/actions/workflows/release.yml/badge.svg)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/actions/workflows/release.yml)
-[![GitHub license](https://badgen.net/github/license/Naereen/Strapdown.js)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/blob/main/LICENSE)
+[![GitHub license](https://badgen.net/github/license/Naereen/Strapdown.js)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/blob/master/LICENSE)
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 

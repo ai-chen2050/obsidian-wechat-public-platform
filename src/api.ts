@@ -195,35 +195,49 @@ export default class ApiManager {
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText +`</section>`)
 			// console.log(htmlText2);
 			// return
-			var thumb_media_id : string | undefined = ""
-			if (only_id === "") {
-				if( frontmatter["thumb_media_id"] !== undefined && frontmatter["thumb_media_id"] !== ""){
-					thumb_media_id = frontmatter["thumb_media_id"]
-				} else {
-					if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
-						thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"_banner");
-					} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
-						thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"_banner");
+			let thumb_media_id : string | undefined = ""
+			let author = ""; let digest = ""; let content_source_url = ""; let need_open_comment = 0;
+			if (frontmatter !== undefined) {
+				if (only_id === "") {
+					if( frontmatter["thumb_media_id"] !== undefined && frontmatter["thumb_media_id"] !== ""){
+						thumb_media_id = frontmatter["thumb_media_id"]
+					} else {
+						if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
+							thumb_media_id = await this.uploadMaterial(frontmatter["banner"], "image", title+"_banner");
+						} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
+							thumb_media_id = await this.uploadMaterial(frontmatter["banner_path"], "image", title+"_banner");
+						}
 					}
+				} else {
+					thumb_media_id = only_id;
 				}
+	
+				if (thumb_media_id === "" && frontmatter["banner"] === undefined && frontmatter["banner_path"] === undefined) {
+					new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
+					return
+				}
+				author = frontmatter["author"];
+				digest = frontmatter["digest"];
+				content_source_url = frontmatter["source_url"];
+				need_open_comment = frontmatter["open_comment"];
 			} else {
-				thumb_media_id = only_id;
+				if (only_id !== "") {
+					thumb_media_id = only_id;
+				} else {
+					new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
+					return
+				}
 			}
-
-			if (thumb_media_id === "" && frontmatter["banner"] === undefined && frontmatter["banner_path"] === undefined) {
-				new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
-				return
-			}
-
+			
 			const url = `${this.baseUrl}/draft/add?access_token=${setings.accessToken}`;
             const article: ArticleElement = {
                 title: title,
-                author: frontmatter["author"],
-                digest: frontmatter["digest"],
+                author: author,
+                digest: digest,
                 content: htmlText2.replace(/[\r\n]/g, ""),
-                content_source_url: frontmatter["source_url"],
+                content_source_url: content_source_url,
                 thumb_media_id: thumb_media_id!,
-                need_open_comment: frontmatter["open_comment"],
+                need_open_comment: need_open_comment,
                 only_fans_can_comment: 0,
             };
 			const articles: Articles = {

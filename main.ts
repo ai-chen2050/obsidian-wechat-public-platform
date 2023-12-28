@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, Setting, TFile, addIcon, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, CachedMetadata, Notice, Plugin, Setting, TFile, addIcon, requestUrl } from 'obsidian';
 import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
@@ -27,7 +27,7 @@ export default class WeChatPublic extends Plugin {
 			new FileSuggestModal(this.app, this.app.vault.getMarkdownFiles(), async (file: TFile) => {
 				const text = await this.frontManager.removeFrontMatter(file)
 				const cache = this.app.metadataCache.getFileCache(file);
-				if (cache?.frontmatter!["thumb_media_id"] === undefined && 
+				if (cache?.frontmatter === undefined || cache?.frontmatter!["thumb_media_id"] === undefined && 
 						cache?.frontmatter!["banner"] === undefined &&
 							cache?.frontmatter!["banner_path"] === undefined) {
 					const covers = await apiManager.getArticleCover()
@@ -81,9 +81,8 @@ export default class WeChatPublic extends Plugin {
 				const basename = file?.basename
 				const text = await this.frontManager.removeFrontMatter(file!)
 				// console.log(text);
-				const cache = this.app.metadataCache.getFileCache(file!);
-				
-				if (cache?.frontmatter!["thumb_media_id"] === undefined && 
+				let cache = this.app.metadataCache.getFileCache(file!);
+				if (cache?.frontmatter === undefined || cache?.frontmatter!["thumb_media_id"] === undefined && 
 						cache?.frontmatter!["banner"] === undefined &&
 							cache?.frontmatter!["banner_path"] === undefined) {
 					const covers = await apiManager.getArticleCover()

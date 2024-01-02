@@ -98,7 +98,7 @@ export default class ApiManager {
 				return
 			}
 			
-			var blobBytes: ArrayBuffer | null = null;
+			let blobBytes: ArrayBuffer | null = null;
 			if (path.startsWith("http")) {
 				const imgresp = await requestUrl(path);
 				blobBytes = imgresp.arrayBuffer
@@ -133,17 +133,17 @@ export default class ApiManager {
 			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
 
 			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
-			var resultArray = Array.from(formDatabuffer);
+			let resultArray = Array.from(formDatabuffer);
 			// console.log(formDataString);
 			// return
 			if (blobBytes !== null) {
-				var pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
-				var endBoundaryArray = [];
-				for (var i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
+				let pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
+				let endBoundaryArray = [];
+				for (let i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
 					endBoundaryArray.push(end_boundary.charCodeAt(i));
 				}
-				var postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
-				var post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
+				let postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
+				let post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
 				// console.log(post_typedArray)
 
 				const url = `${this.baseUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
@@ -372,7 +372,7 @@ export default class ApiManager {
 				return
             }
 			const respObj: BatchGetMaterial = JSON.parse(resp.text)
-			var frontmat: MDFrontMatterContent = new MDFrontMatterContent();
+			let frontmat: MDFrontMatterContent = new MDFrontMatterContent();
 			const nhm = new NodeHtmlMarkdown(
 				/* options (optional) */ {}, 
 				/* customTransformers (optional) */ undefined,
@@ -389,9 +389,9 @@ export default class ApiManager {
 					const date = new Date(objItem.content.create_time * 1000);
 					const dateString = date.toISOString(); 	
 					
-					var contentMD = ""
-					var filePath = ""
-					var mdText = ""
+					let contentMD = ""
+					let filePath = ""
+					let mdText = ""
 					frontmat.author = item.author
 					frontmat.create_time = dateString
 					frontmat.url = item.url
@@ -413,7 +413,7 @@ export default class ApiManager {
 				}
 				for (let i = 0; i < objItem.length; i++) {
 					const item = objItem[i];
-					var filePath = ""
+					let filePath = ""
 					filePath = `${setings.downloadFolder}/${item.name}`
 					const resp = await requestUrl(item.url);
 					this.app.vault.createBinary(filePath, resp.arrayBuffer)
@@ -457,9 +457,9 @@ export default class ApiManager {
 				new Notice(`get Article Cover failed. errcode ${errorcode},` + resp.json["errmsg"]);
 				return undefined
 			}
-			console.log(resp.text);
+			// console.log(resp.text);
 			const respObj: BatchGetMaterial = JSON.parse(resp.text)
-			var images:CoverInfo[] = [];
+			let images:CoverInfo[] = [];
 			const objItems = respObj.item as MediaItem[]
 			for (let i = 0; i < objItems.length; i++) {
 				const img = objItems[i];
@@ -521,7 +521,7 @@ export default class ApiManager {
 				return undefined
 			}
 
-			var blobBytes: ArrayBuffer | null = null;
+			let blobBytes: ArrayBuffer | null = null;
 			if (path.startsWith("http")) {
 				const imgresp = await requestUrl(path);
 				blobBytes = imgresp.arrayBuffer
@@ -546,17 +546,17 @@ export default class ApiManager {
 			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
 
 			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
-			var resultArray = Array.from(formDatabuffer);
+			let resultArray = Array.from(formDatabuffer);
 			// console.log(formDataString);
 			// return
 			if (blobBytes !== null) {
-				var pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
-				var endBoundaryArray = [];
-				for (var i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
+				let pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
+				let endBoundaryArray = [];
+				for (let i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
 					endBoundaryArray.push(end_boundary.charCodeAt(i));
 				}
-				var postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
-				var post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
+				let postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
+				let post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
 				// console.log(post_typedArray)
 
 				const url = `${this.baseUrl}/media/uploadimg?access_token=${setings.accessToken}`;

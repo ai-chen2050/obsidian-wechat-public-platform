@@ -104,7 +104,7 @@ export default class WeChatPublic extends Plugin {
 			name: 'upload material by WeChatPublic plugin.',
 			callback: async () => {
 				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
-                    console.log(path, type, name);
+                    // console.log(path, type, name);
 					if (path === "" || type === "") {
 						new Notice('Please input correct material details!');
 						return
@@ -121,7 +121,7 @@ export default class WeChatPublic extends Plugin {
 			name: 'download material from WeChatPublic.',
 			callback: async () => {
 				new WeChatDownloadMaterialModal(this.app,async (offset, type, totalCount) => {
-                    console.log(type, offset, totalCount);
+                    // console.log(type, offset, totalCount);
 					if (offset === "" || type === "" || totalCount === "") {
 						new Notice('Please input all fields!');
 						return

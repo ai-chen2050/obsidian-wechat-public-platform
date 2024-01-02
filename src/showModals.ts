@@ -207,7 +207,7 @@ class CoverIDSuggestModal extends SuggestModal<CoverInfo> {
 	}
 
 	queryCover(contents: CoverInfo[], query: string, res: CoverInfo[]) {
-		for (var i = 0; i < contents.length; i++) {
+		for (let i = 0; i < contents.length; i++) {
       const content = contents[i];
 			if (content.mediaName.indexOf(query) >= 0) {
 					res.push(content);
@@ -260,7 +260,7 @@ class FileSuggestModal extends SuggestModal<TFile> {
 	}
 
 	querymdFile(contents: TFile[], query: string, res: TFile[]) {
-		for (var i = 0; i < contents.length; i++) {
+		for (let i = 0; i < contents.length; i++) {
       const content = contents[i];
 			if (content.basename .indexOf(query) >= 0) {
 					res.push(content);

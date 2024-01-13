@@ -61,6 +61,23 @@ export default class ApiManager {
 		return res;
 	}
 
+	public formatCodeHTML(html: string) {
+		// 使用正则表达式匹配 <code> 标签中的内容
+		const formattedHTML = html.replace(/(<code[^>]*>)(.*?)<\/code>/gs, function(match, p1, p2) {
+			// console.log(match);
+			// console.log("p1", p1,"\n p2", p2);
+			
+			let replacedCode = "";
+			const lines = p2.split("\n");
+			for (let i = 0; i < lines.length - 1; i++) {
+				replacedCode += p1 + lines[i] + "</code>";
+			}
+			return p1 + replacedCode;
+		  });
+			  
+		return formattedHTML;
+	}
+
 	public async refreshAccessToken(appid: string, secret: string) : Promise<Boolean> {
         if(appid === '' || secret === '') {
             new Notice('Please input correct [appid] and [secret]');
@@ -192,7 +209,8 @@ export default class ApiManager {
 
 			const MdImagedContent = await this.handleMDImage(content)
 			const htmlText = await marked.parse(MdImagedContent)
-			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText +`</section>`)
+			const htmlText1 = this.formatCodeHTML(htmlText)
+			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`)
 			// console.log(htmlText2);
 			// return
 			let thumb_media_id : string | undefined = ""

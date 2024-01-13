@@ -169,6 +169,8 @@ export const wechatFormat = `/* 全局属性
  * 代码块换行 display: block;
  */
 #nice pre code {
+  background: #f8f5ec;
+  display: block;
 }
 
 /*

@@ -72,6 +72,21 @@ export const wechatFormat = `/* 全局属性
 #nice h3:after {
 }
 
+#nice h4 {
+  text-align: center;
+  line-height: 1.5;
+  color: #3f3f3f;
+  font-size: 110%;
+}
+
+/* 四级标题内容 */
+#nice h4 .content {
+}
+
+/* 四级标题修饰 请参考有实例的主题 */
+#nice h4:after {
+}
+
 /* 无序列表整体样式
  * list-style-type: square|circle|disc;
  */

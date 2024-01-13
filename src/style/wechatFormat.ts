@@ -26,6 +26,7 @@ export const wechatFormat = `/* 全局属性
 
 /* 一级标题 */
 #nice h1 {
+  text-align: center;
 }
 
 /* 一级标题内容 */
@@ -56,6 +57,7 @@ export const wechatFormat = `/* 全局属性
 /* 三级标题 */
 #nice h3 {
   margin: 40px 0px 20px 0px;
+  text-align: center;
   font-weight: bold;
   line-height: 1.5;
   color: #3f3f3f;

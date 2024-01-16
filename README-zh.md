@@ -14,10 +14,11 @@
 
 - 中文视频演示请点击下面图片
 <br>
+<br>
 
-- <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4">
-  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="300" height="200">
-</a>
+|    Wechat Public Platform    |    Youtube Downloader    |
+|:-----------:|:-----------:|
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  |
 
 
 
@@ -30,6 +31,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ add draft to WeChatPublic ]【微信公众平台添加草稿】微信公众平台草稿箱添加图文资源
 - [ Release article to WeChatPublic ]【微信公众号发布文章】发布图文消息及各类资源并发布到微信公众平台
 - [ Send all fans to WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
+- [download youtube video] 下载 YouTube 上的视频
 
 <br>
 
@@ -39,6 +41,12 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 |:-----------:|:-----------:|
 | ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
 | ![commands](./public/commands.png)| ![download](./public/download.png) |
+
+---
+
+|    Memu Downloader    |    Commands Downloader   |
+|:-----------:|:-----------:|
+| ![Memu](./public/memuYouDown.png) | ![Commands](./public/cammamYouD.jpg)  |
 
 ---
 

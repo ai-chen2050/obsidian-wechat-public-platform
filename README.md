@@ -16,10 +16,11 @@ The [Obsidian](https://obsidian.md/) WeChat public platform plug-in is an obsidi
 
 - Chinese Video Display 中文视频演示请点击下面图片
 <br>
+<br>
 
-- <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4">
-  <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250">
-</a>
+|    Wechat Public Platform    |    Youtube Downloader    |
+|:-----------:|:-----------:|
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  |
 
 
 ## Release history
@@ -32,6 +33,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ Release article to WeChatPublic ] Release graphic messages and various resources and publish them on the WeChat public platform
 - [ Send all fans to WeChatPublic ] Send group messages to fans (note: authentication is required to have calling permission)
 - [download-material-from-wechatpublic] download material(news,image,video,audio) from wechat public platform
+- [download-youtube-video] download video from youtube platform
 
 <br>
 
@@ -41,6 +43,12 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 |:-----------:|:-----------:|
 | ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
 | ![commands](./public/commands.png)| ![download](./public/download.png) |
+
+---
+
+|    Memu Downloader    |    Commands Downloader   |
+|:-----------:|:-----------:|
+| ![Memu](./public/memuYouDown.png) | ![Commands](./public/cammamYouD.jpg)  |
 
 ---
 

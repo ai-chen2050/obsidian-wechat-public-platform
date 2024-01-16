@@ -16,11 +16,10 @@ The [Obsidian](https://obsidian.md/) WeChat public platform plug-in is an obsidi
 
 - Chinese Video Display 中文视频演示请点击下面图片
 <br>
-<br>
 
 |    Wechat Public Platform    |    Youtube Downloader    |
 |:-----------:|:-----------:|
-| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  |
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  |
 
 
 ## Release history

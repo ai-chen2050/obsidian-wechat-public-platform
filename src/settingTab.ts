@@ -30,6 +30,9 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		this.setAppId();
 		this.setSecret();
 		this.setDownloadFolder();
+		this.setYoutubeSaveFolder();
+		this.setProxyIP();
+		this.setVideoResolution();
 		this.setBlacklist();
 		this.setNoteLocationFolder();
 	}
@@ -150,6 +153,27 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			});
 	}
 
+	private setYoutubeSaveFolder(): void {
+		new Setting(this.containerEl)
+			.setName('YoutubeSaveFolder')
+			.setDesc('download folder from youtube')
+			.addDropdown((dropdown) => {
+				const files = (this.app.vault.adapter as any).files;
+				const folders = pickBy(files, (val: any) => {
+					return val.type === 'folder';
+				});
+
+				Object.keys(folders).forEach((val) => {
+					dropdown.addOption(val, val);
+				});
+				return dropdown
+					.setValue(get(settingsStore).youtubeSaveFolder)
+					.onChange(async (value) => {
+						settingsStore.actions.setYoutubeSaveFolder(value);
+					});
+			});
+	}
+
 	private setBlacklist(): void {
 		new Setting(this.containerEl)
 			.setName('Blacklist')
@@ -160,6 +184,41 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 					 .onChange((value: string) => {
 						settingsStore.actions.setBlacklistFolder(value);
 				});
+			});
+	}
+
+	private setProxyIP(): void {
+		new Setting(this.containerEl)
+			.setName('ProxyIP')
+			.setDesc('代理 IP, proxy ip for download youtube video')
+			.addText((input) => {
+				input.setPlaceholder('http://user:pass@111.111.111.111:8080')
+					 .setValue(get(settingsStore).ProxyIP)
+					 .onChange((value: string) => {
+						settingsStore.actions.setProxyIP(value);
+				});
+			});
+	}
+
+	private setVideoResolution(): void {
+		new Setting(this.containerEl)
+			.setName('视频分辨率')
+			.setDesc('默认最高分辨率,video resolution from youtube,default is heightest')
+			.addDropdown((dropdown) => {
+				const values = {
+					'hd360': 'hd360',
+					'hd720': 'hd720',
+					'default': 'default'
+				};
+
+				Object.keys(values).forEach((val) => {
+					dropdown.addOption(val, val);
+				});
+				return dropdown
+					.setValue(get(settingsStore).VideoResolution)
+					.onChange(async (value) => {
+						settingsStore.actions.setVideoResolution(value);
+					});
 			});
 	}
 }

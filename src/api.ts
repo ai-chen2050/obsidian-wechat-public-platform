@@ -1,4 +1,4 @@
-import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml } from 'obsidian';
+import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml, FileSystemAdapter } from 'obsidian';
 import { settingsStore } from './settings';
 import { get } from 'svelte/store';
 import {marked} from 'marked'
@@ -11,6 +11,10 @@ import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
 import { chooseBoundary } from 'utils/cookiesUtil';
+
+import fs from "fs";
+import ytdl from 'ytdl-core';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 export default class ApiManager {
 	app: App;
@@ -631,4 +635,41 @@ export default class ApiManager {
 			return "no";
 		}
 	}
+
+	async getYoutubeVideo(videoUrl: string, name: string) {
+		try {
+			const fadp = this.app.vault.adapter as FileSystemAdapter;
+			const setings = get(settingsStore)
+			const agent = new HttpsProxyAgent(setings.ProxyIP);
+			let stream;
+			const  videores = setings.VideoResolution
+			if ( videores=== '' || videores === 'default') {
+				stream = ytdl(videoUrl, { requestOptions: { agent }, });
+			} else {
+				stream = ytdl(videoUrl,{ quality: videores, requestOptions: { agent } });
+			}
+
+			new Notice('Starting Download', 10000)
+			const filePath = `${fadp.getBasePath()}/${setings.youtubeSaveFolder}/${name}.mp4`
+			const writableStream = fs.createWriteStream(filePath);
+
+			stream.on('data', (chunk:any) => {
+				writableStream.write(chunk); // 将 chunk 写入到文件
+			});
+
+			stream.on('error', (err:Error) => {
+				new Notice(err.message);
+				console.error(err);
+			});
+
+			stream.on('end', () => {
+				new Notice('Finished');
+				writableStream.end(); // 关闭可写流
+			});
+		} catch (e) {
+			new Notice('Failed: ', e);
+			console.error('download youtube video err: ' + e);
+		}
+	}
+	
 }

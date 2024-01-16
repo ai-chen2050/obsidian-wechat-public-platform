@@ -114,6 +114,54 @@ class WeChatDownloadMaterialModal extends Modal {
     }
 }
 
+class YoutubeDownloadModal extends Modal {
+    videoUrl: string;
+    name: string;
+    onSubmit: (videoUrl: string, name: string) => void;
+  
+    constructor(app: App, onSubmit: (videoUrl: string, name: string) => void) {
+      super(app);
+      this.onSubmit = onSubmit;
+    }
+  
+    onOpen() {
+      const { contentEl } = this;
+  
+      contentEl.createEl("h1", { text: "Input Youtube Video Source" });
+      
+      new Setting(contentEl)
+        .setName("video url")
+        .setDesc("video-url: 视频链接")
+        .addText((text) =>
+          text.onChange((value) => {
+            this.videoUrl = value
+          }));
+
+      new Setting(contentEl)
+        .setName("video name")
+        .setDesc("video-name: 视频命名")
+        .addText((text) =>
+          text.onChange((value) => {
+            this.name = value
+          }));
+
+      new Setting(contentEl)
+        .addButton((btn) =>
+          btn
+            .setButtonText("Submit")
+            .setCta()
+            .onClick(() => {
+              this.close();
+              this.onSubmit(this.videoUrl, this.name);
+            }));
+    }
+  
+    onClose() {
+      let { contentEl } = this;
+      contentEl.empty();
+    }
+}
+
 // 打开某个文件
 class OpenFileModal extends Modal {
     input: HTMLInputElement;
@@ -323,4 +371,4 @@ class MultiSuggest extends AbstractInputSuggest<string> {
   }
 }
 
-export { OpenFileModal, WarningModal, WeChatDownloadMaterialModal, WeChatUploadMaterialModal, CoverIDSuggestModal, FileSuggestModal, MultiSuggest };
+export { OpenFileModal, WarningModal, WeChatDownloadMaterialModal, WeChatUploadMaterialModal, CoverIDSuggestModal, YoutubeDownloadModal, FileSuggestModal, MultiSuggest };

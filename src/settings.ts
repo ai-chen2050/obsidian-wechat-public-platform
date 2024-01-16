@@ -7,9 +7,12 @@ interface WechatPublicPluginSettings {
 	accessToken: string;
 	lastAccessKeyTime: number
 	isTokenValid: boolean;
-	downloadFolder: string;	// for automatic release using
+	downloadFolder: string;	// for automatic release using, wechat article save folder
+	youtubeSaveFolder: string;	// youtube video save folder
 	noteLocationFolder: string;	// for automatic release using
 	BlacklistFolder: string;
+	ProxyIP: string;	// proxy IP for download youtube
+	VideoResolution: string;	// video resolution
 }
 
 const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
@@ -19,8 +22,11 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	lastAccessKeyTime: -1,
 	isTokenValid: false,
 	downloadFolder: '',
+	youtubeSaveFolder: '',
 	noteLocationFolder: '',
-	BlacklistFolder: ''
+	BlacklistFolder: '',
+	ProxyIP: '',
+	VideoResolution: '',
 };
 
 const createSettingsStore = () => {
@@ -101,6 +107,13 @@ const createSettingsStore = () => {
 			return state;
 		});
 	};
+
+	const setYoutubeSaveFolder = (value: string) => {
+		store.update((state) => {
+			state.youtubeSaveFolder = value;
+			return state;
+		});
+	};
 	
 	const setBlacklistFolder = (notebookBlacklist: string) => {
 		store.update((state) => {
@@ -108,6 +121,21 @@ const createSettingsStore = () => {
 			return state;
 		});
 	};
+
+	const setProxyIP = (ProxyIP: string) => {
+		store.update((state) => {
+			state.ProxyIP = ProxyIP;
+			return state;
+		});
+	};
+
+	const setVideoResolution = (Resolution: string) => {
+		store.update((state) => {
+			state.VideoResolution = Resolution;
+			return state;
+		});
+	};
+
 	return {
 		subscribe: store.subscribe,
 		initialise,
@@ -118,7 +146,10 @@ const createSettingsStore = () => {
 			setAppId,
 			setSecret,
 			clearSecret,
-			setBlacklistFolder
+			setBlacklistFolder,
+			setYoutubeSaveFolder,
+			setProxyIP,
+			setVideoResolution,
 		}
 	};
 };

@@ -1,10 +1,11 @@
-import { App, Editor, MarkdownView, Modal, CachedMetadata, Notice, Plugin, Setting, TFile, addIcon, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, CachedMetadata, Notice, Plugin, Setting, TFile, addIcon, requestUrl, Menu } from 'obsidian';
 import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
-import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal, CoverIDSuggestModal, FileSuggestModal } from 'src/showModals';
+import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal, CoverIDSuggestModal, FileSuggestModal, YoutubeDownloadModal } from 'src/showModals';
 import { CoverInfo } from 'src/models';
+import { chooseBoundary } from 'utils/cookiesUtil';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -17,11 +18,12 @@ const DEFAULT_SETTINGS: WeChatPublicSettings = {
 export default class WeChatPublic extends Plugin {
 	settings: WeChatPublicSettings;
 	frontManager: FrontMatterManager;
+	apiManager: ApiManager;
 
 	async onload() {
 		settingsStore.initialise(this);
 		this.frontManager = new FrontMatterManager(this.app);
-		const apiManager = new ApiManager(this.app);
+		this.apiManager = new ApiManager(this.app);
 
 		const ribbonIconEl = this.addRibbonIcon("send", '发布到草稿箱', (evt: MouseEvent) => {
 			new FileSuggestModal(this.app, this.app.vault.getMarkdownFiles(), async (file: TFile) => {
@@ -30,20 +32,21 @@ export default class WeChatPublic extends Plugin {
 				if (cache?.frontmatter === undefined || cache?.frontmatter!["thumb_media_id"] === undefined && 
 						cache?.frontmatter!["banner"] === undefined &&
 							cache?.frontmatter!["banner_path"] === undefined) {
-					const covers = await apiManager.getArticleCover()
+					const covers = await this.apiManager.getArticleCover()
 					if (covers === undefined) {
 						return
 					}
 					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
-						await apiManager.newDraft(file.basename, text, cache?.frontmatter!, cover.mediaID);
+						await this.apiManager.newDraft(file.basename, text, cache?.frontmatter!, cover.mediaID);
 					}).open();
 					return
 				} else {
-					await apiManager.newDraft(file.basename, text, cache?.frontmatter!)
+					await this.apiManager.newDraft(file.basename, text, cache?.frontmatter!)
 				}
 			}).open();
 		});
 		ribbonIconEl.addClass('wechat-pblic-ribbon-class');
+		this.registerContextMenu();
 
 		this.addCommand({
 			id: 'send-all-fans-by-wechatpublic-plugin',
@@ -54,8 +57,8 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 				const cache = this.app.metadataCache.getFileCache(file!);
 				
-				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
-				await apiManager.sendAll(media_id!)
+				const media_id = await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				await this.apiManager.sendAll(media_id!)
 			}
 		});
 
@@ -68,8 +71,8 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 
 				const cache = this.app.metadataCache.getFileCache(file!);
-				const media_id = await apiManager.newDraft(basename!, text, cache?.frontmatter!)
-				await apiManager.freepublish(media_id!)
+				const media_id = await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				await this.apiManager.freepublish(media_id!)
 			}
 		});
 
@@ -85,16 +88,16 @@ export default class WeChatPublic extends Plugin {
 				if (cache?.frontmatter === undefined || cache?.frontmatter!["thumb_media_id"] === undefined && 
 						cache?.frontmatter!["banner"] === undefined &&
 							cache?.frontmatter!["banner_path"] === undefined) {
-					const covers = await apiManager.getArticleCover()
+					const covers = await this.apiManager.getArticleCover()
 					if (covers === undefined) {
 						return
 					}
 					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
-						await apiManager.newDraft(basename!, text, cache?.frontmatter!, cover.mediaID);
+						await this.apiManager.newDraft(basename!, text, cache?.frontmatter!, cover.mediaID);
 					}).open();
 					return
 				} else {
-					await apiManager.newDraft(basename!, text, cache?.frontmatter!)
+					await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
 				}
 			}
 		});
@@ -104,13 +107,11 @@ export default class WeChatPublic extends Plugin {
 			name: 'upload material by WeChatPublic plugin.',
 			callback: async () => {
 				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
-                    // console.log(path, type, name);
 					if (path === "" || type === "") {
 						new Notice('Please input correct material details!');
 						return
 					}
-					// const path = "https://mmbiz.qpic.cn/mmbiz_png/avKRXZvpU06RaicVPeDfRia2jZODXWV7qeRbL32r2FnWySlDTTkicCDWaTCoFszFlchcGxXlBN6efDeNf4sEJvV6w/640?wx_fmt=png";
-					await apiManager.uploadMaterial(path, type, name)
+					await this.apiManager.uploadMaterial(path, type, name)
                 }).open();
 				return
 			}
@@ -121,19 +122,33 @@ export default class WeChatPublic extends Plugin {
 			name: 'download material from WeChatPublic.',
 			callback: async () => {
 				new WeChatDownloadMaterialModal(this.app,async (offset, type, totalCount) => {
-                    // console.log(type, offset, totalCount);
 					if (offset === "" || type === "" || totalCount === "") {
 						new Notice('Please input all fields!');
 						return
 					}
-					await apiManager.batchGetMaterial(type, Number(offset), Number(totalCount))
+					await this.apiManager.batchGetMaterial(type, Number(offset), Number(totalCount))
+                }).open();
+				return
+			}
+		});
+
+		this.addCommand({
+			id: 'download-youtube-video',
+			name: 'download youtube video',
+			callback: async () => {
+				new YoutubeDownloadModal(this.app,async (videoUrl, name) => {
+					if ((videoUrl === "" || !videoUrl.startsWith('http')) || name === "") {
+						new Notice('Please input correct youtube video url!');
+						return
+					}
+					await this.apiManager.getYoutubeVideo(videoUrl, name)
                 }).open();
 				return
 			}
 		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new WeChatPublicSettingTab(this.app, this, apiManager));
+		this.addSettingTab(new WeChatPublicSettingTab(this.app, this, this.apiManager));
 	}
 
 	onunload() {
@@ -147,4 +162,41 @@ export default class WeChatPublic extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	// 右键菜单
+	registerContextMenu() {
+        let addMemu = (mu: Menu, selection: string) => {
+            mu.addItem((item) => {
+                item.setTitle("Download video from youtube")
+                    .setIcon("info")
+                    .onClick(async () => {
+                        this.apiManager.getYoutubeVideo(selection, chooseBoundary());
+                    });
+            });
+        };
+        // markdown 编辑模式 右键菜单
+        this.registerEvent(
+            this.app.workspace.on(
+                "editor-menu",
+                (menu: Menu, editor: Editor, view: MarkdownView) => {
+                    let selection = editor.getSelection();
+                    if (selection || selection.trim().length === selection.length) {
+                        addMemu(menu, selection);
+                    }
+                }
+            )
+        );
+        // markdown 预览模式 右键菜单
+        this.registerDomEvent(document.body, "contextmenu", (evt) => {
+            if ((evt.target as HTMLElement).matchParent(".markdown-preview-view")) {
+                const selection = window.getSelection()!.toString().trim();
+                if (!selection) return;
+
+                evt.preventDefault();
+                let menu = new Menu();
+                addMemu(menu, selection);
+                menu.showAtMouseEvent(evt);
+            }
+        });
+    }
 }

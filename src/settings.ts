@@ -15,6 +15,8 @@ interface WechatPublicPluginSettings {
 	VideoResolution: string;	// video resolution
 	BjhJwtToken: string;		// baidu bjh jwt token
 	BjhCookie: string; 			// baidu bjh cookie
+	BjhName: string; 			// baidu bjh name
+	BjhAppID: string; 			// baidu bjh appid
 }
 
 const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
@@ -31,6 +33,8 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	VideoResolution: '',
 	BjhCookie: '',
 	BjhJwtToken: '',
+	BjhName: '',
+	BjhAppID: '',
 };
 
 const createSettingsStore = () => {
@@ -80,6 +84,8 @@ const createSettingsStore = () => {
 		store.update((state) => {
 			state.BjhCookie = '';
 			state.BjhJwtToken = '';
+			state.BjhAppID = '';
+			state.BjhName = '';
 			return state;
 		});
 	};
@@ -163,6 +169,20 @@ const createSettingsStore = () => {
 		});
 	};
 
+	const setBjhName = (BjhName: string) => {
+		store.update((state) => {
+			state.BjhName = BjhName;
+			return state;
+		});
+	};
+
+	const setBjhAppID = (BjhAppID: string) => {
+		store.update((state) => {
+			state.BjhAppID = BjhAppID;
+			return state;
+		});
+	};
+
 	return {
 		subscribe: store.subscribe,
 		initialise,
@@ -180,6 +200,8 @@ const createSettingsStore = () => {
 			setVideoResolution,
 			setBjhCookie,
 			setBjhJwtToken,
+			setBjhName,
+			setBjhAppID,
 		}
 	};
 };

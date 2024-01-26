@@ -691,7 +691,7 @@ export default class ApiManager {
 			formDataString += `Content-Disposition: form-data; name="type"` + '\r\n\r\n' + 'image' + '\r\n';
 			
 			formDataString += '--' + boundary + '\r\n';
-			formDataString += `Content-Disposition: form-data; name="app_id"` + '\r\n\r\n' + '1628530297000268' + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="app_id"` + '\r\n\r\n' + setings.BjhAppID + '\r\n';
 			formDataString += '--' + boundary + '\r\n';
 			formDataString += `Content-Disposition: form-data; name="is_waterlog"` + '\r\n\r\n' + '1' + '\r\n';
 			formDataString += '--' + boundary + '\r\n';

@@ -1,7 +1,8 @@
-import { Notice } from 'obsidian';
+import { Notice, RequestUrlParam, requestUrl } from 'obsidian';
 import { parseCookies } from '../utils/cookiesUtil';
 import { settingsStore } from './settings';
 import { WeChatPublicSettingTab } from './settingTab';
+import { get } from 'svelte/store';
 
 export class BjhLoginModel {
 	private modal: any;
@@ -26,6 +27,9 @@ export class BjhLoginModel {
 		const filter = {
 			urls: ['https://baijiahao.baidu.com/builder/app/appinfo']
 		};
+		const filterBase = {
+			urls: ["https://baijiahao.baidu.com/author/eco/rights/getabilityinfo"]
+		};
         
 		session.webRequest.onSendHeaders(filter, (details: any) => {
 			const cookies = details.requestHeaders['Cookie'];
@@ -33,6 +37,33 @@ export class BjhLoginModel {
 			// const cookieArr = parseCookies(cookies);
             settingsStore.actions.setBjhCookie(cookies);
             settingsStore.actions.setBjhJwtToken(Token);
+		});
+
+        session.webRequest.onCompleted(filterBase, async (details: any) => {
+			if (details.statusCode == 200) {
+                const setings = get(settingsStore);
+				const url = "https://baijiahao.baidu.com/builder/app/appinfo";
+                const header = {
+                    "accept": "application/json, text/plain, */*",
+                    "accept-language": "zh-CN,zh;q=0.9",
+                    "cache-control": "no-cache",
+                    "pragma": "no-cache",
+                    "Cookie": setings.BjhCookie,
+                    "token": setings.BjhJwtToken,
+                };
+                const req: RequestUrlParam = {
+                    url: url,
+                    method: 'GET',
+                    headers: header
+                };
+                const resp = await requestUrl(req);
+                if (resp.status == 200) {
+                    const app_id: Number = resp.json["data"]["user"]["app_id"];
+                    const name = resp.json["data"]["user"]["name"];
+                    settingsStore.actions.setBjhAppID(app_id.toString());
+                    settingsStore.actions.setBjhName(name);
+                }
+			}
 		});
 	}
 

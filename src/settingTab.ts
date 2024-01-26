@@ -129,7 +129,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		);
 
 		new Setting(this.containerEl)
-			.setName(`百家号已登录`)
+			.setName(`百家号已登录: [ ${get(settingsStore).BjhName} ]`)
 			.setDesc(desc)
 			.addButton((button) => {
 				return button

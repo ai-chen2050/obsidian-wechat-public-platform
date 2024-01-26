@@ -119,6 +119,38 @@ export default class ApiManager {
         }
 		return true;
 	}
+
+	public async refreshBJHToken(cookie: string, token: string) : Promise<Boolean> {
+        if(cookie === '' || token === '') {
+            new Notice('Please input correct [cookie] and [token]');
+            return false;
+        }
+
+		const url = `https://baijiahao.baidu.com/builder/app/appinfo`;
+		let BJHheader:Record<string,string> = this.getBjhHeaders();
+		BJHheader['Cookie'] = cookie;
+		BJHheader['token'] = token;
+ 		const req: RequestUrlParam = {
+			url: url,
+			method: 'HEAD',
+			headers: BJHheader
+		};
+		const resp = await requestUrl(req);
+		console.log(resp.headers);
+		
+		const respAccessToken: string = resp.headers["token"];
+		if (respAccessToken === undefined) {
+			const errcode = resp.json["errcode"];
+			const errmsg = resp.json["errmsg"];
+			console.log(errmsg);
+			new Notice(`尝试刷新AccessToken失败, errorCode: ${errcode}, errmsg: ${errmsg}`);
+			return false;
+		} else {
+			new Notice('刷新 AccessToken 成功');
+			settingsStore.actions.setBjhJwtToken(respAccessToken);
+		}
+		return true;
+	}
     
 	async uploadMaterial(path: string, fileType: string, fileName: string): Promise<string |undefined> {
         try {
@@ -730,7 +762,9 @@ export default class ApiManager {
 
 	async publishToBjh(title: string, content: string, frontmatter: FrontMatterCache): Promise<string |undefined> {
         try {
-            const setings = get(settingsStore);
+			const setings = get(settingsStore);
+			await this.refreshBJHToken(setings.BjhCookie, setings.BjhJwtToken);
+			
 			let BjhHeader: Record<string, string> = this.getBjhHeaders();
 			BjhHeader["content-type"] = "application/x-www-form-urlencoded";
 			BjhHeader["Referer"] = "https://baijiahao.baidu.com/builder/rc/edit?type=news";

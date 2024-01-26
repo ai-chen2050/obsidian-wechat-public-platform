@@ -19,7 +19,7 @@ The [Obsidian](https://obsidian.md/) WeChat public platform plug-in is an obsidi
 
 |    [Wechat Public](https://mp.weixin.qq.com/) Platform    |    [Youtube](youtube.com) Downloader    |    [Baidu BaiJiaHao](https://baijiahao.baidu.com/)    |
 |:-----------:|:-----------:|:-----------:|
-| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  | <a href="https://www.bilibili.com/video/BV1aD4y1f7pk/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
 
 
 ## Release history

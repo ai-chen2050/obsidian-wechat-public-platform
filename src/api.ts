@@ -707,14 +707,14 @@ export default class ApiManager {
 					body: post_typedArray.buffer,
 				};
 				const resp = await requestUrl(req);
-				const media_id = resp.json["ret"]["https_url"];
-				if (media_id === undefined) {
-					const errcode = resp.json["errno"];
+				const errcode = resp.json["errno"];
+				if (errcode !== 0) {
 					const errmsg = resp.json["errmsg"];
 					console.log(decodeURIComponent(JSON.stringify(resp.json)));
 					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
 					return
 				}
+				const media_id = resp.json["ret"]["https_url"];
 				new Notice(`Success upload Image url ${media_id}.`);
 				return media_id
 			} else {
@@ -763,7 +763,7 @@ export default class ApiManager {
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`) + `<img src="${cover_media_url}"><br>`
 			// console.log(htmlText2);
 			// return
-			
+
 			const url = `https://baijiahao.baidu.com/pcui/article/publish?callback=bjhpublish`;
             const cover_images = [{
 				"src": cover_media_url!,
@@ -795,8 +795,8 @@ export default class ApiManager {
 			};
 
 			const resp = await requestUrl(req);
-			const media_id = resp.json["ret"]["url"];
-			if (media_id === undefined) {
+			const errcode = resp.json["errno"];
+			if (errcode !== 0) {
 				const errcode = resp.json["errno"];
 				const errmsg = resp.json["errmsg"];
 				console.log(errmsg);
@@ -804,6 +804,7 @@ export default class ApiManager {
 				new Notice(`newDraft, errorCode: ${errcode}, errmsg: ${errmsg}`);
 				return
 			}
+			const media_id = resp.json["ret"]["url"];
 			if (resp.headers['token'] !== '') {
 				settingsStore.actions.setBjhJwtToken(resp.headers['token']);
 			}

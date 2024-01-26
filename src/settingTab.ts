@@ -4,6 +4,8 @@ import { settingsStore } from './settings'
 import ApiManager from './api'
 import { get } from 'svelte/store';
 import pickBy from 'lodash.pickby';
+import { BjhLoginModel } from './LoginModas';
+import { buyMeACoffee } from './consts/global';
 
 export class WeChatPublicSettingTab extends PluginSettingTab {
 	plugin: WeChatPublic;
@@ -20,24 +22,35 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Wechat Public Platform Settings'});
+		containerEl.createEl('h2', { text: '🌈 Wechat Public Platform Settings'});
 		if ((get(settingsStore).lastAccessKeyTime + this.expireDuration) <  new Date().getTime()) {
-			this.showLogin();
+			this.showWxLogin();
 		} else {
-			this.showLogout();
+			this.showWxLogout();
 		}
-
+		
 		this.setAppId();
 		this.setSecret();
 		this.setDownloadFolder();
+		this.setBlacklist();
+		this.setNoteLocationFolder();
+		
+		containerEl.createEl('h2', { text: '🌎 🌞 Baidu Bjh Platform Settings 🔍'});
+		if ( get(settingsStore).BjhCookie === '') {
+			this.showBJHLogin();
+		} else {
+			this.showBJHLogout();
+		}
+
+		containerEl.createEl('h2', { text: '👉 📺 Youtube Downloader Settings'});
 		this.setYoutubeSaveFolder();
 		this.setProxyIP();
 		this.setVideoResolution();
-		this.setBlacklist();
-		this.setNoteLocationFolder();
+
+		this.donation(containerEl);
 	}
 
-	private showLogout(): void {
+	private showWxLogout(): void {
 		document.createRange().createContextualFragment;
 		const desc = document.createRange().createContextualFragment(
 			`若要退出清理 Secret,请点击 clean secret`
@@ -75,7 +88,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			});
 	}
 
-	private showLogin(): void {
+	private showWxLogin(): void {
 		const desc = document.createRange().createContextualFragment(
 			`测试前请先填写 [appid] 和 [secretkey], 此外请联系管理员将自己的外网 IP 添加至白名单。https://tool.lu/ip/`
 		);
@@ -91,6 +104,58 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 						// reqest access token key
 						await this.apiManager.refreshAccessToken(get(settingsStore).appid, get(settingsStore).secret);
 						this.display();
+					});
+			});
+	}
+
+	private showBJHLogin(): void {
+		new Setting(this.containerEl).setName('登录百家号').addButton((button) => {
+			return button
+				.setButtonText('登录')
+				.setCta()
+				.onClick(async () => {
+					button.setDisabled(true);
+					const loginModel = new BjhLoginModel(this);
+					await loginModel.doLogin();
+					this.display();
+				});
+		});
+	}
+
+	private showBJHLogout(): void {
+		document.createRange().createContextualFragment;
+		const desc = document.createRange().createContextualFragment(
+			`若要退出清理 Cookie,请点击 clean cookie`
+		);
+
+		new Setting(this.containerEl)
+			.setName(`百家号已登录`)
+			.setDesc(desc)
+			.addButton((button) => {
+				return button
+					.setButtonText('Clean cookie')
+					.setCta()
+					.onClick(async () => {
+						button.setDisabled(true);
+						settingsStore.actions.clearBjhCookie()
+						this.display();
+					});
+			})
+			.addButton((button) => {
+				return button
+					.setButtonText('Copy Cookie')
+					.setCta()
+					.onClick(async () => {
+						const bjhCookie = get(settingsStore).BjhCookie;
+						navigator.clipboard.writeText(bjhCookie).then(
+							function () {
+								new Notice('拷贝Cookie到剪切板成功！');
+							},
+							function (error) {
+								new Notice('拷贝Cookie到剪切板失败！');
+								console.error('拷贝百家号Cookie失败', error);
+							}
+						);
 					});
 			});
 	}
@@ -221,4 +286,106 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 					});
 			});
 	}
+
+	private donation(containerEl: HTMLElement): void {
+		containerEl.createEl('h2', { text: '💰 Support 支持 & Funding 赞助 💰'});
+		containerEl.createEl('br');
+		let div = containerEl.createEl('div');
+	  
+		const donateTextZH = document.createElement('p');
+		donateTextZH.appendText(
+		'如果您觉得这个插件帮助到您了，为您提供了价值，欢迎赞助我以持续开发迭代本插件。' +
+			'您可以使用如下微信/ WeChat 二维码以赞助开发者: 🧡🧡 👏🏻👏🏻',
+		);
+		donateTextZH.style.textAlign = 'center';
+		donateTextZH.style.width = '70%';
+		donateTextZH.style.margin = '0 auto';
+		div.appendChild(donateTextZH);
+		
+		div = this.createDonateQRC(div);
+
+		div.appendChild(containerEl.createEl('br'));
+		const donateText = document.createElement('p');
+		donateText.appendText(
+		'If this plugin adds value for you and you would like to help support ' +
+			'continued development, please use the buttons below:',
+		);
+		donateText.style.textAlign = 'center';
+		donateText.style.width = '70%';
+		donateText.style.margin = '0 auto';
+		div.appendChild(donateText);
+		
+		div.appendChild(containerEl.createEl('br'));
+		const parser = new DOMParser();
+	
+		//   div.appendChild(
+		// 	this.createDonateButton(
+		// 	  'https://paypal.me/blakechan',
+		// 	  parser.parseFromString(paypal, 'text/xml').documentElement,
+		// 	),
+		//   );
+	
+		div.appendChild(
+		this.createDonateButton(
+			'https://www.buymeacoffee.com/blakechan',
+			parser.parseFromString(buyMeACoffee, 'text/xml').documentElement,
+		),
+		);
+	}
+
+	private createDonateButton(link: string, img: HTMLElement): HTMLElement {
+		const a = document.createElement('a');
+		a.setAttribute('href', link);
+		a.style.margin = "40%"
+		a.appendChild(img);
+		return a;
+	};
+
+	private createDonateQRC(div: HTMLDivElement): HTMLDivElement {
+		const table = document.createElement('table');
+		// 创建第一行
+		const row1 = document.createElement('tr');
+
+		// 创建第一个单元格
+		const cell1 = document.createElement('td');
+		const text1 = document.createElement('p');
+		cell1.appendChild(text1);
+		row1.appendChild(cell1);
+
+		// 创建第二个单元格
+		const cell2 = document.createElement('td');
+		const text2 = document.createElement('p');
+		cell2.appendChild(text2);
+		row1.appendChild(cell2);
+
+		// 创建第二行
+		const row2 = document.createElement('tr');
+
+		// 创建第三个单元格并添加第三张图片
+		const cell3 = document.createElement('td');
+		const img3 = document.createElement('img');
+		img3.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/commutity.jpg';
+		img3.style.width = '200px';
+		img3.style.height = 'auto'
+		img3.style.margin = '0 10px'
+		cell3.appendChild(img3);
+		row2.appendChild(cell3);
+
+		// 创建第四个单元格并添加第四张图片
+		const cell4 = document.createElement('td');
+		const img4 = document.createElement('img');
+		img4.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/wechat-motion-qr.png';
+		img4.style.width = '200px';
+		img4.style.height = 'auto'
+		img4.style.margin = '0 10px'
+		cell4.appendChild(img4);
+		row2.appendChild(cell4);
+
+		table.appendChild(row1);
+		table.appendChild(row2);
+
+		table.style.margin = "0 auto";
+		div.appendChild(table);
+		return div;
+	};
 }

@@ -15,9 +15,9 @@
 - 中文视频演示请点击下面图片
 <br>
 
-|    Wechat Public Platform    |    Youtube Downloader    |
-|:-----------:|:-----------:|
-| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  |
+|    [Wechat Public](https://mp.weixin.qq.com/) Platform    |    [Youtube](youtube.com) Downloader    |    [Baidu BaiJiaHao](https://baijiahao.baidu.com/)    |
+|:-----------:|:-----------:|:-----------:|
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obdisian-youtube.png" alt="Obsidian Wechat" width="350" height="250"> </a>  | <a href="https://www.bilibili.com/video/BV1Ci4y1i7zB/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
 
 
 
@@ -31,6 +31,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ Release article to WeChatPublic ]【微信公众号发布文章】发布图文消息及各类资源并发布到微信公众平台
 - [ Send all fans to WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
 - [download youtube video] 下载 YouTube 上的视频
+- [publish article to baidu bjh news] 将 Obsidian 文章发布到百度的百家号中
 
 <br>
 

@@ -44,3 +44,15 @@ export const chooseBoundary = (): string => {
   const boundary = crypto.randomBytes(16).toString("hex");
   return boundary;
 }
+
+export const jsonToUrlEncoded = (json: Record<string, string>): string => {
+	const params = new URLSearchParams();
+  
+	for (const key in json) {
+	  if (Object.prototype.hasOwnProperty.call(json, key)) {
+		params.append(key, json[key]);
+	  }
+	}
+  
+	return params.toString();
+}

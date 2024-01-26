@@ -8,11 +8,13 @@ interface WechatPublicPluginSettings {
 	lastAccessKeyTime: number
 	isTokenValid: boolean;
 	downloadFolder: string;	// for automatic release using, wechat article save folder
-	youtubeSaveFolder: string;	// youtube video save folder
 	noteLocationFolder: string;	// for automatic release using
 	BlacklistFolder: string;
+	youtubeSaveFolder: string;	// youtube video save folder
 	ProxyIP: string;	// proxy IP for download youtube
 	VideoResolution: string;	// video resolution
+	BjhJwtToken: string;		// baidu bjh jwt token
+	BjhCookie: string; 			// baidu bjh cookie
 }
 
 const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
@@ -27,6 +29,8 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	BlacklistFolder: '',
 	ProxyIP: '',
 	VideoResolution: '',
+	BjhCookie: '',
+	BjhJwtToken: '',
 };
 
 const createSettingsStore = () => {
@@ -67,6 +71,15 @@ const createSettingsStore = () => {
 			state.appid = '';
 			state.secret = '';
 			state.isTokenValid = false;
+			return state;
+		});
+	};
+
+	const clearBjhCookie = () => {
+		console.log('clear bjh cookie and exit.');
+		store.update((state) => {
+			state.BjhCookie = '';
+			state.BjhJwtToken = '';
 			return state;
 		});
 	};
@@ -136,6 +149,20 @@ const createSettingsStore = () => {
 		});
 	};
 
+	const setBjhCookie = (BjhCookie: string) => {
+		store.update((state) => {
+			state.BjhCookie = BjhCookie;
+			return state;
+		});
+	};
+
+	const setBjhJwtToken = (BjhJwtToken: string) => {
+		store.update((state) => {
+			state.BjhJwtToken = BjhJwtToken;
+			return state;
+		});
+	};
+
 	return {
 		subscribe: store.subscribe,
 		initialise,
@@ -146,10 +173,13 @@ const createSettingsStore = () => {
 			setAppId,
 			setSecret,
 			clearSecret,
+			clearBjhCookie,
 			setBlacklistFolder,
 			setYoutubeSaveFolder,
 			setProxyIP,
 			setVideoResolution,
+			setBjhCookie,
+			setBjhJwtToken,
 		}
 	};
 };

@@ -1,11 +1,11 @@
-import { App, Editor, MarkdownView, Modal, CachedMetadata, Notice, Plugin, Setting, TFile, addIcon, requestUrl, Menu } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, CachedMetadata, Notice, Plugin, Setting, TFile, addIcon, requestUrl, Menu, RequestUrlParam } from 'obsidian';
 import { WeChatPublicSettingTab } from "./src/settingTab"
 import ApiManager from 'src/api';
 import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
 import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal, CoverIDSuggestModal, FileSuggestModal, YoutubeDownloadModal } from 'src/showModals';
 import { CoverInfo } from 'src/models';
-import { chooseBoundary } from 'utils/cookiesUtil';
+import { chooseBoundary, jsonToUrlEncoded } from 'utils/cookiesUtil';
 
 interface WeChatPublicSettings {
 	mySetting: string;
@@ -37,11 +37,11 @@ export default class WeChatPublic extends Plugin {
 						return
 					}
 					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
-						await this.apiManager.newDraft(file.basename, text, cache?.frontmatter!, cover.mediaID);
+						await this.apiManager.newDraftToWechat(file.basename, text, cache?.frontmatter!, cover.mediaID);
 					}).open();
 					return
 				} else {
-					await this.apiManager.newDraft(file.basename, text, cache?.frontmatter!)
+					await this.apiManager.newDraftToWechat(file.basename, text, cache?.frontmatter!)
 				}
 			}).open();
 		});
@@ -57,7 +57,7 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 				const cache = this.app.metadataCache.getFileCache(file!);
 				
-				const media_id = await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				const media_id = await this.apiManager.newDraftToWechat(basename!, text, cache?.frontmatter!)
 				await this.apiManager.sendAll(media_id!)
 			}
 		});
@@ -71,7 +71,7 @@ export default class WeChatPublic extends Plugin {
 				const text = await this.frontManager.removeFrontMatter(file!)
 
 				const cache = this.app.metadataCache.getFileCache(file!);
-				const media_id = await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
+				const media_id = await this.apiManager.newDraftToWechat(basename!, text, cache?.frontmatter!)
 				await this.apiManager.freepublish(media_id!)
 			}
 		});
@@ -93,11 +93,11 @@ export default class WeChatPublic extends Plugin {
 						return
 					}
 					new CoverIDSuggestModal(this.app, covers, async (cover: CoverInfo) => {
-						await this.apiManager.newDraft(basename!, text, cache?.frontmatter!, cover.mediaID);
+						await this.apiManager.newDraftToWechat(basename!, text, cache?.frontmatter!, cover.mediaID);
 					}).open();
 					return
 				} else {
-					await this.apiManager.newDraft(basename!, text, cache?.frontmatter!)
+					await this.apiManager.newDraftToWechat(basename!, text, cache?.frontmatter!)
 				}
 			}
 		});
@@ -144,6 +144,23 @@ export default class WeChatPublic extends Plugin {
 					await this.apiManager.getYoutubeVideo(videoUrl, name)
                 }).open();
 				return
+			}
+		});
+
+		this.addCommand({
+			id: 'publish-baidu-bjh-news',
+			name: 'publish baidu bjh news',
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				try {
+					const file = view.file
+					const basename = file?.basename
+					const text = await this.frontManager.removeFrontMatter(file!)
+					let cache = this.app.metadataCache.getFileCache(file!);
+					await this.apiManager.publishToBjh(basename!, text, cache?.frontmatter!)
+					return
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 

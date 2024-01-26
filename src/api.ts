@@ -10,7 +10,7 @@ import * as mime from 'mime-types';
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
-import { chooseBoundary } from 'utils/cookiesUtil';
+import { chooseBoundary, jsonToUrlEncoded } from 'utils/cookiesUtil';
 
 import fs from "fs";
 import ytdl from 'ytdl-core';
@@ -23,13 +23,22 @@ export default class ApiManager {
         this.app = app;
     }
 
-	readonly baseUrl: string = 'https://api.weixin.qq.com/cgi-bin';
+	readonly baseWxUrl: string = 'https://api.weixin.qq.com/cgi-bin';
     readonly expireDuration : number = 7200;
 
 	private getHeaders() {
 		return {
 			'Accept-Encoding': 'gzip, deflate, br',
 			'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+		};
+	}
+
+	private getBjhHeaders() {
+		return {
+			"accept": "application/json, text/plain, */*",
+			"accept-language": "zh-CN,zh;q=0.9",
+			"cache-control": "no-cache",
+			"pragma": "no-cache",
 		};
 	}
 
@@ -89,7 +98,7 @@ export default class ApiManager {
         }
 
         if ((get(settingsStore).lastAccessKeyTime + this.expireDuration) <  new Date().getTime()) {
-            const url = `${this.baseUrl}/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
+            const url = `${this.baseWxUrl}/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
             const req: RequestUrlParam = {
                 url: url,
                 method: 'GET',
@@ -167,7 +176,7 @@ export default class ApiManager {
 				let post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
 				// console.log(post_typedArray)
 
-				const url = `${this.baseUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
+				const url = `${this.baseWxUrl}/material/add_material?access_token=${setings.accessToken}&type=${fileType}`;
 				const header = {
 					'Content-Type': 'multipart/form-data; boundary=' + boundary,
 					'Accept-Encoding': 'gzip, deflate, br',
@@ -203,7 +212,7 @@ export default class ApiManager {
 		}
 	}
 
-	async newDraft(title: string, content: string, frontmatter: FrontMatterCache, only_id: string = ""): Promise<string |undefined> {
+	async newDraftToWechat(title: string, content: string, frontmatter: FrontMatterCache, only_id: string = ""): Promise<string |undefined> {
         try {
             const setings = get(settingsStore)
             const pass = await this.refreshAccessToken(setings.appid, setings.secret)
@@ -211,12 +220,6 @@ export default class ApiManager {
 				return
 			}
 
-			const MdImagedContent = await this.handleMDImage(content)
-			const htmlText = await marked.parse(MdImagedContent)
-			const htmlText1 = this.formatCodeHTML(htmlText)
-			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`)
-			// console.log(htmlText2);
-			// return
 			let thumb_media_id : string | undefined = ""
 			let author = ""; let digest = ""; let content_source_url = ""; let need_open_comment = 0;
 			if (frontmatter !== undefined) {
@@ -251,7 +254,14 @@ export default class ApiManager {
 				}
 			}
 			
-			const url = `${this.baseUrl}/draft/add?access_token=${setings.accessToken}`;
+			const MdImagedContent = await this.handleMDImage(content, 'wx')
+			const htmlText = await marked.parse(MdImagedContent)
+			const htmlText1 = this.formatCodeHTML(htmlText)
+			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`)
+			// console.log(htmlText2);
+			// return
+
+			const url = `${this.baseWxUrl}/draft/add?access_token=${setings.accessToken}`;
             const article: ArticleElement = {
                 title: title,
                 author: author,
@@ -298,7 +308,7 @@ export default class ApiManager {
 				return
 			}
 
-			const url = `${this.baseUrl}/freepublish/submit?access_token=${setings.accessToken}`;
+			const url = `${this.baseWxUrl}/freepublish/submit?access_token=${setings.accessToken}`;
             const reqBody = {
                 "media_id": media_id
             };
@@ -333,7 +343,7 @@ export default class ApiManager {
 				return
 			}
 
-			const url = `${this.baseUrl}/message/mass/sendall?access_token=${setings.accessToken}`;
+			const url = `${this.baseWxUrl}/message/mass/sendall?access_token=${setings.accessToken}`;
             const reqBody = {
 				"filter":{
 				   "is_to_all":true,
@@ -375,7 +385,7 @@ export default class ApiManager {
 				return
 			}
 
-			const url = `${this.baseUrl}/material/batchget_material?access_token=${setings.accessToken}`;
+			const url = `${this.baseWxUrl}/material/batchget_material?access_token=${setings.accessToken}`;
             const reqBody = {
 				"type": type,
 				"offset":offset,
@@ -461,7 +471,7 @@ export default class ApiManager {
 				return undefined
 			}
 	
-			const url = `${this.baseUrl}/material/batchget_material?access_token=${setings.accessToken}`;
+			const url = `${this.baseWxUrl}/material/batchget_material?access_token=${setings.accessToken}`;
 			const reqBody = {
 				"type": "image",
 				"offset":0,
@@ -495,12 +505,18 @@ export default class ApiManager {
 			console.error('Get Material error' + e);
 		}
 	}
-	async handleMDImage(content: string): Promise<string> {
+
+	async handleMDImage(content: string, to: string): Promise<string> {
 		const imageRegex = /!\[.*?\]\((.*?)\)/g;	// for ![]()
 		const matches = Array.from(content.matchAll(imageRegex));
 		const promises = matches.map(async (match) => {
 			const imagePath = match[1];
-			const responseUrl = await this.uploadImage(imagePath, "");
+			let responseUrl;
+			if (to === 'wx') {
+				responseUrl = await this.uploadImageToWx(imagePath, "");
+			} else if(to === 'bjh') {
+				responseUrl = await this.uploadImageToBjh(imagePath, "");
+			}
 			return {
 				match,
 				responseUrl
@@ -512,7 +528,7 @@ export default class ApiManager {
 		const promises2 = matches2.map(async (match) => {
 			const imagePath = match[1];
 			const imgfile: TFile | undefined = this.app.vault.getFiles().find((value) => value.name === imagePath);
-			const responseUrl = await this.uploadImage(imgfile?.path!, "");
+			const responseUrl = await this.uploadImageToWx(imgfile?.path!, "");
 			return {
 				match,
 				responseUrl
@@ -535,7 +551,8 @@ export default class ApiManager {
 		// console.log(parsedContent);
 		return parsedContent
 	}
-	async uploadImage(path: string, fileName: string): Promise<string |undefined> {
+
+	async uploadImageToWx(path: string, fileName: string): Promise<string |undefined> {
         try {
 			const setings = get(settingsStore)
 			const pass = await this.refreshAccessToken(setings.appid, setings.secret)
@@ -581,7 +598,7 @@ export default class ApiManager {
 				let post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
 				// console.log(post_typedArray)
 
-				const url = `${this.baseUrl}/media/uploadimg?access_token=${setings.accessToken}`;
+				const url = `${this.baseWxUrl}/media/uploadimg?access_token=${setings.accessToken}`;
 				const header = {
 					'Content-Type': 'multipart/form-data; boundary=' + boundary,
 					'Accept-Encoding': 'gzip, deflate, br',
@@ -614,6 +631,189 @@ export default class ApiManager {
 				'Failed to upload image'
 			);
 			console.error('upload image error' + e);
+		}
+	}
+
+	async uploadImageToBjh(path: string, fileName: string): Promise<string |undefined> {
+        try {
+			const setings = get(settingsStore)
+			let blobBytes: ArrayBuffer | null = null;
+			if (path.startsWith("http")) {
+				const imgresp = await requestUrl(path);
+				blobBytes = imgresp.arrayBuffer
+			} else {
+				const imgfile = this.app.vault.getAbstractFileByPath(path);
+				if (imgfile instanceof TFile) {
+					const data = await this.app.vault.readBinary(imgfile);
+					blobBytes = data
+				} else {
+					new Notice('Please input correct file relative path in obsidian');
+					return
+				}				
+			}
+
+			const boundary = chooseBoundary()
+			const end_boundary = '\r\n--' + boundary + '--\r\n';
+			let formDataString = '';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="type"` + '\r\n\r\n' + 'image' + '\r\n';
+			
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="app_id"` + '\r\n\r\n' + '1628530297000268' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="is_waterlog"` + '\r\n\r\n' + '1' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="save_material"` + '\r\n\r\n' + '1' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="no_compress"` + '\r\n\r\n' + '0' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="is_events"` + '\r\n\r\n' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			formDataString += `Content-Disposition: form-data; name="article_type"` + '\r\n\r\n' + 'news' + '\r\n';
+			formDataString += '--' + boundary + '\r\n';
+			const contentType = mime.contentType(path);
+			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
+			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
+
+			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
+			let resultArray = Array.from(formDatabuffer);
+			// console.log(formDataString);
+			// return
+			if (blobBytes !== null) {
+				let pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
+				let endBoundaryArray = [];
+				for (let i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
+					endBoundaryArray.push(end_boundary.charCodeAt(i));
+				}
+				let postArray = resultArray.concat(Array.prototype.slice.call(pic_typedArray), endBoundaryArray); // 合并文本、图片数据得到最终要发送的数据
+				let post_typedArray = new Uint8Array(postArray); // 把最终结果转为typed array，以便最后取得buffer数据
+				// console.log(post_typedArray)
+
+				const url = `https://baijiahao.baidu.com/pcui/picture/uploadproxy`;
+				const header = {
+					'Content-Type': 'multipart/form-data; boundary=' + boundary,
+					'Accept-Encoding': 'gzip, deflate, br',
+					'Accept': '*/*', 
+					'Connection': 'keep-alive',
+					'Referer': 'https://baijiahao.baidu.com/builder/rc/edit?type=news',
+					"token": setings.BjhJwtToken,
+					"Cookie": setings.BjhCookie,
+				}; 
+
+				const req: RequestUrlParam = {
+					url: url,
+					method: 'POST',
+					headers: header,
+					body: post_typedArray.buffer,
+				};
+				const resp = await requestUrl(req);
+				const media_id = resp.json["ret"]["https_url"];
+				if (media_id === undefined) {
+					const errcode = resp.json["errno"];
+					const errmsg = resp.json["errmsg"];
+					console.log(decodeURIComponent(JSON.stringify(resp.json)));
+					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
+					return
+				}
+				new Notice(`Success upload Image url ${media_id}.`);
+				return media_id
+			} else {
+				throw new Error('resrouce is empty,blobBytes, Failed to upload image');
+			}
+		} catch (e) {
+			new Notice(
+				'Failed to upload image'
+			);
+			console.error('upload image error' + e);
+		}
+	}
+
+	async publishToBjh(title: string, content: string, frontmatter: FrontMatterCache): Promise<string |undefined> {
+        try {
+            const setings = get(settingsStore);
+			let BjhHeader: Record<string, string> = this.getBjhHeaders();
+			BjhHeader["content-type"] = "application/x-www-form-urlencoded";
+			BjhHeader["Referer"] = "https://baijiahao.baidu.com/builder/rc/edit?type=news";
+			BjhHeader["token"] = setings.BjhJwtToken;
+			BjhHeader["Cookie"] = setings.BjhCookie;
+
+			let cover_media_url : string | undefined = ""
+			let author = ""; let digest = "";
+			if (frontmatter !== undefined) {
+				if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
+					cover_media_url = await this.uploadImageToBjh(frontmatter["banner"], title+"_banner");
+				} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
+					cover_media_url = await this.uploadImageToBjh(frontmatter["banner_path"], title+"_banner");
+				}
+
+				if (cover_media_url === "" && frontmatter["banner"] === undefined && frontmatter["banner_path"] === undefined) {
+					new Notice('Please set banner of article, thumb_media_id, banner, banner_path in file frontManager');
+					return
+				}
+				author = frontmatter["author"];
+				digest = frontmatter["digest"];
+			} else {
+				new Notice('Please set banner of article, banner, banner_path in file frontManager');
+				return
+			}
+
+			const MdImagedContent = await this.handleMDImage(content, 'bjh')
+			const htmlText = await marked.parse(MdImagedContent)
+			const htmlText1 = this.formatCodeHTML(htmlText)
+			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`) + `<img src="${cover_media_url}"><br>`
+			// console.log(htmlText2);
+			// return
+			
+			const url = `https://baijiahao.baidu.com/pcui/article/publish?callback=bjhpublish`;
+            const cover_images = [{
+				"src": cover_media_url!,
+				"cropData": {"x":0,"y":0,"width":2048,"height":1365},
+				"machine_chooseimg":0,
+				"isLegal":1
+			}];
+
+            const cover_images_map = [{ "src": cover_media_url!, }];
+			const reqBody = {
+				"type": "news",
+                "title": title,
+                "author": author,
+                "abstract": digest,
+                "content": htmlText2,
+				"len": htmlText2.length.toString(),
+                "vertical_cover": cover_media_url!,
+                "cover_images": JSON.stringify(cover_images),
+                "_cover_images_map": JSON.stringify(cover_images_map),
+            };
+			const activityList = `&activity_list%5B0%5D%5Bid%5D=408&activity_list%5B0%5D%5Bis_checked%5D=0&activity_list%5B1%5D%5Bid%5D=ttv&activity_list%5B1%5D%5Bis_checked%5D=1&activity_list%5B2%5D%5Bid%5D=reward&activity_list%5B2%5D%5Bis_checked%5D=1&activity_list%5B3%5D%5Bid%5D=aigc_bjh_status&activity_list%5B3%5D%5Bis_checked%5D=0&source_reprinted_allow=0&abstract_from=2&isBeautify=false&usingImgFilter=false&cover_layout=one`;
+			const postStr = `&source=upload&cover_source=upload&subtitle=&bjhtopic_id=&bjhtopic_info=&clue=1&bjhmt=&order_id=&aigc_rebuild=&image_edit_point=%5B%7B%22img_type%22%3A%22cover%22%2C%22img_num%22%3A%7B%22template%22%3A0%2C%22font%22%3A0%2C%22filter%22%3A0%2C%22paster%22%3A0%2C%22cut%22%3A0%2C%22any%22%3A0%7D%7D%2C%7B%22img_type%22%3A%22body%22%2C%22img_num%22%3A%7B%22template%22%3A0%2C%22font%22%3A0%2C%22filter%22%3A0%2C%22paster%22%3A0%2C%22cut%22%3A0%2C%22any%22%3A0%7D%7D%5D`
+			const bodyContent = jsonToUrlEncoded(reqBody) + activityList + postStr;
+			const req: RequestUrlParam = {
+				url: url,
+				method: 'POST',
+				headers: BjhHeader,
+				body: bodyContent,
+			};
+
+			const resp = await requestUrl(req);
+			const media_id = resp.json["ret"]["url"];
+			if (media_id === undefined) {
+				const errcode = resp.json["errno"];
+				const errmsg = resp.json["errmsg"];
+				console.log(errmsg);
+				console.log("resp = " + decodeURIComponent(JSON.stringify(resp.json)));
+				new Notice(`newDraft, errorCode: ${errcode}, errmsg: ${errmsg}`);
+				return
+			}
+			if (resp.headers['token'] !== '') {
+				settingsStore.actions.setBjhJwtToken(resp.headers['token']);
+			}
+			new Notice(`Success publish article media_id ${media_id}.`);
+			return media_id
+		} catch (e) {
+			new Notice(
+				'Failed to publish to baidu bjh. Please check your appId, secret and try again.'
+			);
+			console.error('publish to baidu bjh error' + e);
 		}
 	}
 

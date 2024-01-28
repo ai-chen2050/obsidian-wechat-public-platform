@@ -136,7 +136,7 @@ export default class ApiManager {
 			headers: BJHheader
 		};
 		const resp = await requestUrl(req);
-		console.log(resp.headers);
+		// console.log(resp.headers);
 		
 		const respAccessToken: string = resp.headers["token"];
 		if (respAccessToken === undefined) {

@@ -10,7 +10,7 @@ import * as mime from 'mime-types';
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
-import { chooseBoundary, jsonToUrlEncoded } from 'utils/cookiesUtil';
+import { chooseBoundary, convertToPngBuffer, isWebp, jsonToUrlEncoded } from 'utils/cookiesUtil';
 
 import fs from "fs";
 import ytdl from 'ytdl-core';
@@ -703,16 +703,26 @@ export default class ApiManager {
 			formDataString += '--' + boundary + '\r\n';
 			formDataString += `Content-Disposition: form-data; name="article_type"` + '\r\n\r\n' + 'news' + '\r\n';
 			formDataString += '--' + boundary + '\r\n';
-			const contentType = mime.contentType(path);
+			let contentType = mime.contentType(path);
+			if (contentType !== "image/jpeg" && contentType !== "image/png" && contentType !== "image/jpg") {
+				contentType = "image/png";
+			}
 			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
-			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
-
+			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';			
+			
 			const formDatabuffer = Buffer.from(formDataString, 'utf-8');	// utf8 encode, for chinese
 			let resultArray = Array.from(formDatabuffer);
 			// console.log(formDataString);
 			// return
 			if (blobBytes !== null) {
 				let pic_typedArray = new Uint8Array(blobBytes); // 把buffer转为typed array数据、再转为普通数组使之可以使用数组的方法
+				if (isWebp(pic_typedArray)) {
+					new Notice("not support format image/webp, use the pointed cover");
+					// todo: to be updated later
+					const pointedCover = "https://mmbiz.qpic.cn/mmbiz_jpg/avKRXZvpU06jcDsZoj2IPxLtG08lfq3hvVUianAGoxyc5d3hpsic3CPoRTeiaNBvqr0LaSHcES0x1k1cvwxUVSoxA/0?wx_fmt=jpeg";
+					const imgresp = await requestUrl(pointedCover);
+					pic_typedArray = new Uint8Array(imgresp.arrayBuffer);
+				} 
 				let endBoundaryArray = [];
 				for (let i = 0; i < end_boundary.length; i++) { // 最后取出结束boundary的charCode
 					endBoundaryArray.push(end_boundary.charCodeAt(i));
@@ -790,7 +800,6 @@ export default class ApiManager {
 				new Notice('Please set banner of article, banner, banner_path in file frontManager');
 				return
 			}
-
 			const MdImagedContent = await this.handleMDImage(content, 'bjh')
 			const htmlText = await marked.parse(MdImagedContent)
 			const htmlText1 = this.formatCodeHTML(htmlText)

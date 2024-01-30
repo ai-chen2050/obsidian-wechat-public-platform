@@ -1,5 +1,7 @@
 import { Cookie } from 'set-cookie-parser';
 import * as crypto from "crypto";
+import 'jimp';
+const { Jimp } = window as any;
 
 export const parseCookies = (cookieInput: string): Cookie[] => {
 	if (cookieInput === '') {
@@ -55,4 +57,26 @@ export const jsonToUrlEncoded = (json: Record<string, string>): string => {
 	}
   
 	return params.toString();
+}
+
+export const isWebp = (buffer: Uint8Array) => {
+	if (!buffer || buffer.length < 12) {
+		return false;
+	}
+
+	return buffer[8] === 87
+		&& buffer[9] === 69
+		&& buffer[10] === 66
+		&& buffer[11] === 80;
+}
+
+export async function convertToPngBuffer(buffer: Buffer): Promise<Buffer> {
+	try {
+		console.log(Jimp);
+		
+		const image = await Jimp.read(buffer);
+		return await image.getBufferAsync(Jimp.MIME_PNG);
+	} catch (err) {
+	  	throw err;
+	}
 }

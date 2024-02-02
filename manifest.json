@@ -1,7 +1,7 @@
 {
 	"id": "wechat-public-platform",
 	"name": "Wechat Public Platform",
-	"version": "0.20.3",
+	"version": "0.20.5",
 	"minAppVersion": "0.16.0",
 	"description": "Obsidian Wechat public Plugin is a plugin to release article from your Obsidian Vault.",
 	"author": "Blake Chan",

@@ -71,9 +71,7 @@ export const isWebp = (buffer: Uint8Array) => {
 }
 
 export async function convertToPngBuffer(buffer: Buffer): Promise<Buffer> {
-	try {
-		console.log(Jimp);
-		
+	try {		
 		const image = await Jimp.read(buffer);
 		return await image.getBufferAsync(Jimp.MIME_PNG);
 	} catch (err) {

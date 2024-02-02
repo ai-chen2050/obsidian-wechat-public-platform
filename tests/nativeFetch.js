@@ -1,4 +1,4 @@
-var formdata = new FormData();
+let formdata = new FormData();
 
 async function getData() { 
     const path = "https://mmbiz.qpic.cn/mmbiz_png/avKRXZvpU06RaicVPeDfRia2jZODXWV7qeRbL32r2FnWySlDTTkicCDWaTCoFszFlchcGxXlBN6efDeNf4sEJvV6w/640?wx_fmt=png"
@@ -10,7 +10,7 @@ async function getData() {
 async function run() { 
     await getData();
 
-    var requestOptions = {
+    let requestOptions = {
       method: 'POST',
       body: formdata,
       redirect: 'follow'

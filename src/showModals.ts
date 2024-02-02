@@ -276,18 +276,27 @@ class CoverIDSuggestModal extends SuggestModal<CoverInfo> {
 		return res;
 	}
 
-	renderSuggestion(cover: CoverInfo, el: HTMLElement) {
-		const title = cover.mediaName;
-        
-    if (this.query) {
-        el.innerHTML = title.replace(RegExp(`(${this.query})`,'g'),`<span class="suggestion-highlight">pic: $1</span>`);
-        el.createDiv({text:"id: " + cover.mediaID.substring(0, 30),cls:"suggestion-note"});
-    } else {
-        el.createSpan({text:"pic: " + title});
-        el.createDiv({text:"id: " + cover.mediaID.substring(0, 30),cls:"suggestion-note"});
-    }
-        
-	}
+  renderSuggestion(cover: CoverInfo, el: HTMLElement) {
+      const title = cover.mediaName;
+      
+      while (el.firstChild) {
+          el.removeChild(el.firstChild);
+      }
+      
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = "pic: " + title;
+      if (this.query) {
+          const queryRegExp = new RegExp(`(${this.query})`, 'g');
+          const highlightedTitle = title.replace(queryRegExp, '<span class="suggestion-highlight">pic: $1</span>');
+          titleSpan.innerHTML = highlightedTitle;
+      }
+      el.appendChild(titleSpan);
+      
+      const idDiv = document.createElement('div');
+      idDiv.textContent = "id: " + cover.mediaID.substring(0, 30);
+      idDiv.classList.add("suggestion-note");
+      el.appendChild(idDiv);
+  }
 
 	onChooseSuggestion(item: CoverInfo, evt: MouseEvent | KeyboardEvent) {
 			this.onSubmit(item);
@@ -326,18 +335,27 @@ class FileSuggestModal extends SuggestModal<TFile> {
 		return res;
 	}
 
-	renderSuggestion(mdFile: TFile, el: HTMLElement) {
-		const title = mdFile.name;
-        
-    if (this.query) {
-        el.innerHTML = title.replace(RegExp(`(${this.query})`,'g'),`<span class="suggestion-highlight">title: $1</span>`);
-        el.createDiv({text:"path: " + mdFile.path,cls:"suggestion-note"});
-    } else {
-        el.createSpan({text:"title: " +  title});
-        el.createDiv({text:"path: " + mdFile.path,cls:"suggestion-note"});
-    }
-        
-	}
+  renderSuggestion(mdFile: TFile, el: HTMLElement) {
+      const title = mdFile.name;
+      
+      while (el.firstChild) {
+          el.removeChild(el.firstChild);
+      }
+      
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = "title: " + title;
+      if (this.query) {
+          const queryRegExp = new RegExp(`(${this.query})`, 'g');
+          const highlightedTitle = title.replace(queryRegExp, '<span class="suggestion-highlight">title: $1</span>');
+          titleSpan.innerHTML = highlightedTitle;
+      }
+      el.appendChild(titleSpan);
+      
+      const pathDiv = document.createElement('div');
+      pathDiv.textContent = "path: " + mdFile.path;
+      pathDiv.classList.add("suggestion-note");
+      el.appendChild(pathDiv);
+  }
 
 	onChooseSuggestion(item: TFile, evt: MouseEvent | KeyboardEvent) {
 			this.onSubmit(item);

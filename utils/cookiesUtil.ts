@@ -1,7 +1,6 @@
 import { Cookie } from 'set-cookie-parser';
 import * as crypto from "crypto";
-import 'jimp';
-const { Jimp } = window as any;
+import { TFile } from 'obsidian';
 
 export const parseCookies = (cookieInput: string): Cookie[] => {
 	if (cookieInput === '') {
@@ -70,11 +69,20 @@ export const isWebp = (buffer: Uint8Array) => {
 		&& buffer[11] === 80;
 }
 
-export async function convertToPngBuffer(buffer: Buffer): Promise<Buffer> {
-	try {		
-		const image = await Jimp.read(buffer);
-		return await image.getBufferAsync(Jimp.MIME_PNG);
-	} catch (err) {
-	  	throw err;
+export function getAllRecursiveFolders(filePaths: TFile[]): string[] {
+	const foldersSet: Set<string> = new Set();
+	
+	for (const filePath of filePaths) {
+	  const folders = filePath.path.split('/');
+	  folders.pop(); // Remove the filename from the path
+	  
+	  // Iterate over each folder in the path and add it to the set
+	  for (let i = 1; i <= folders.length; i++) {
+		const folderPath = folders.slice(0, i).join('/');
+		foldersSet.add(folderPath);
+	  }
 	}
-}
+	
+	// Convert the set to an array and return
+	return Array.from(foldersSet);
+  }

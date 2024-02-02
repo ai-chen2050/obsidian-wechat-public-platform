@@ -10,7 +10,7 @@ import * as mime from 'mime-types';
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
-import { chooseBoundary, convertToPngBuffer, isWebp, jsonToUrlEncoded } from 'utils/cookiesUtil';
+import { chooseBoundary, isWebp, jsonToUrlEncoded } from 'utils/cookiesUtil';
 
 import fs from "fs";
 import ytdl from 'ytdl-core';

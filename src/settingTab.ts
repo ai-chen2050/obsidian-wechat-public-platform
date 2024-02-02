@@ -1,4 +1,4 @@
-import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
+import { App, Notice, PluginSettingTab, Setting, TFolder } from 'obsidian';
 import WeChatPublic from '../main'
 import { settingsStore } from './settings'
 import ApiManager from './api'
@@ -202,14 +202,15 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			.setName('DownloadFolder')
 			.setDesc('download folder from wechat public')
 			.addDropdown((dropdown) => {
-				const files = (this.app.vault.adapter as any).files;
+				const files = this.app.vault.getAllLoadedFiles();				
 				const folders = pickBy(files, (val: any) => {
-					return val.type === 'folder';
+					return val instanceof TFolder;
 				});
 
-				Object.keys(folders).forEach((val) => {
-					dropdown.addOption(val, val);
+				Object.values(folders).forEach((val: TFolder) => {
+					dropdown.addOption(val.path, val.path);
 				});
+
 				return dropdown
 					.setValue(get(settingsStore).downloadFolder)
 					.onChange(async (value) => {
@@ -223,13 +224,13 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			.setName('YoutubeSaveFolder')
 			.setDesc('download folder from youtube')
 			.addDropdown((dropdown) => {
-				const files = (this.app.vault.adapter as any).files;
+				const files = this.app.vault.getAllLoadedFiles();				
 				const folders = pickBy(files, (val: any) => {
-					return val.type === 'folder';
+					return val instanceof TFolder;
 				});
 
-				Object.keys(folders).forEach((val) => {
-					dropdown.addOption(val, val);
+				Object.values(folders).forEach((val: TFolder) => {
+					dropdown.addOption(val.path, val.path);
 				});
 				return dropdown
 					.setValue(get(settingsStore).youtubeSaveFolder)

@@ -71,7 +71,7 @@ export class BjhLoginModel {
 		try {
 			await this.modal.loadURL('https://baijiahao.baidu.com/builder/theme/bjh/login');
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			new Notice('加载百家号登录页面失败');
 		}
 	}

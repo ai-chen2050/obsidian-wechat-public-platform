@@ -45,11 +45,11 @@ const createSettingsStore = () => {
 	const initialise = async (plugin: WeChatPublic): Promise<void> => {
 		const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 		const settings: WechatPublicPluginSettings = { ...data };
-		console.log('--------init get access token------');
+		// console.log('--------init get access token------');
 		if (settings.accessToken !== '') {
 			setAccessToken(settings.accessToken);
 		} else {
-			console.log("appid " + settings.appid + " ,secret " + settings.secret);
+			// console.log("appid " + settings.appid + " ,secret " + settings.secret);
 			setAppId(settings.appid);
 			setSecret(settings.secret);
 		}
@@ -68,7 +68,7 @@ const createSettingsStore = () => {
 	});
 
 	const clearSecret = () => {
-		console.log('[wechat Public plugin] clear secret and exit.');
+		// console.log('[wechat Public plugin] clear secret and exit.');
 		store.update((state) => {
 			state.accessToken = '';
 			state.lastAccessKeyTime = new Date().getTime();
@@ -80,7 +80,7 @@ const createSettingsStore = () => {
 	};
 
 	const clearBjhCookie = () => {
-		console.log('clear bjh cookie and exit.');
+		// console.log('clear bjh cookie and exit.');
 		store.update((state) => {
 			state.BjhCookie = '';
 			state.BjhJwtToken = '';

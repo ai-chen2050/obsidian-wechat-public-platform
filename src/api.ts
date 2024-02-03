@@ -109,7 +109,7 @@ export default class ApiManager {
             if (respAccessToken === undefined) {
                 const errcode = resp.json["errcode"];
                 const errmsg = resp.json["errmsg"];
-                console.log(errmsg);
+                console.error(errmsg);
                 new Notice(`尝试刷新AccessToken失败, errorCode: ${errcode}, errmsg: ${errmsg}`);
 				return false;
             } else {
@@ -142,7 +142,7 @@ export default class ApiManager {
 		if (respAccessToken === undefined) {
 			const errcode = resp.json["errcode"];
 			const errmsg = resp.json["errmsg"];
-			console.log(errmsg);
+			console.error(errmsg);
 			new Notice(`尝试刷新AccessToken失败, errorCode: ${errcode}, errmsg: ${errmsg}`);
 			return false;
 		} else {
@@ -227,7 +227,7 @@ export default class ApiManager {
 				if (media_id === undefined) {
 					const errcode = resp.json["errcode"];
 					const errmsg = resp.json["errmsg"];
-					console.log(errmsg);
+					console.error(errmsg);
 					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
 					return
 				}
@@ -318,7 +318,7 @@ export default class ApiManager {
 			if (media_id === undefined) {
 				const errcode = resp.json["errcode"];
 				const errmsg = resp.json["errmsg"];
-				console.log(errmsg);
+				console.error(errmsg);
 				new Notice(`newDraft, errorCode: ${errcode}, errmsg: ${errmsg}`);
 				return
 			}
@@ -649,7 +649,7 @@ export default class ApiManager {
 				if (media_id === undefined) {
 					const errcode = resp.json["errcode"];
 					const errmsg = resp.json["errmsg"];
-					console.log(errmsg);
+					console.error(errmsg);
 					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
 					return
 				}
@@ -752,7 +752,7 @@ export default class ApiManager {
 				const errcode = resp.json["errno"];
 				if (errcode !== 0) {
 					const errmsg = resp.json["errmsg"];
-					console.log(decodeURIComponent(JSON.stringify(resp.json)));
+					console.error(decodeURIComponent(JSON.stringify(resp.json)));
 					new Notice(`uploadMaterial, errorCode: ${errcode}, errmsg: ${errmsg}`);
 					return
 				}
@@ -842,8 +842,8 @@ export default class ApiManager {
 			if (errcode !== 0) {
 				const errcode = resp.json["errno"];
 				const errmsg = resp.json["errmsg"];
-				console.log(errmsg);
-				console.log("resp = " + decodeURIComponent(JSON.stringify(resp.json)));
+				console.error(errmsg);
+				// console.log("resp = " + decodeURIComponent(JSON.stringify(resp.json)));
 				new Notice(`newDraft, errorCode: ${errcode}, errmsg: ${errmsg}`);
 				return
 			}

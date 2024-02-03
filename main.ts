@@ -159,7 +159,7 @@ export default class WeChatPublic extends Plugin {
 					await this.apiManager.publishToBjh(basename!, text, cache?.frontmatter!)
 					return
 				} catch (error) {
-					console.log(error);
+					console.error(error);
 				}
 			}
 		});

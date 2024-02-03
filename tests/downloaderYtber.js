@@ -11,7 +11,7 @@ const stream = ytdl(videoUrl, {
   requestOptions: { agent },
 });
 
-console.log('Starting Download');
+// console.log('Starting Download');
 const writableStream = fs.createWriteStream('video.mp4');
 
 stream.on('data', chunk => {
@@ -24,5 +24,5 @@ stream.on('error', err => {
 
 stream.on('end', () => {
   writableStream.end(); // 关闭可写流
-  console.log('Finished');
+  // console.log('Finished');
 });

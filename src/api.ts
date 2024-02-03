@@ -911,7 +911,7 @@ export default class ApiManager {
 				writableStream.end(); // 关闭可写流
 			});
 		} catch (e) {
-			new Notice('Failed: ', e);
+			new Notice('Failed: ' + e, 10000);
 			console.error('download youtube video err: ' + e);
 		}
 	}

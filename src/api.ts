@@ -907,7 +907,7 @@ export default class ApiManager {
 			});
 
 			stream.on('end', () => {
-				new Notice('Finished');
+				new Notice('Finished', 10000);
 				writableStream.end(); // 关闭可写流
 			});
 		} catch (e) {

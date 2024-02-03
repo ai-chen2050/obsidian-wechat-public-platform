@@ -169,7 +169,7 @@ export default class WeChatPublic extends Plugin {
 	}
 
 	onunload() {
-		console.log('unloading WeChatPublic plugin', new Date().toLocaleString());
+		new Notice('unloading WeChatPublic plugin at '+ new Date().toLocaleString())
 	}
 
 	async loadSettings() {

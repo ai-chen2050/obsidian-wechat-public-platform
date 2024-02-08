@@ -907,11 +907,11 @@ export default class ApiManager {
 			});
 
 			stream.on('end', () => {
-				new Notice('Finished', 10000);
+				new Notice('Finished', 30000);
 				writableStream.end(); // 关闭可写流
 			});
 		} catch (e) {
-			new Notice('Failed: ' + e, 10000);
+			new Notice('Failed: ' + e, 30000);
 			console.error('download youtube video err: ' + e);
 		}
 	}

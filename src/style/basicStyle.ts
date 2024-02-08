@@ -11,7 +11,7 @@ export  const basicStyle  = `/*默认样式，最佳实践*/
   word-break: break-word;
   word-wrap: break-word;
   text-align: left;
-  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Optima, 'Microsoft YaHei', PingFangSC-light, serif;
   margin-top: -10px; /*解决开头空隙过大问题*/
 }
 
@@ -342,7 +342,7 @@ export  const basicStyle  = `/*默认样式，最佳实践*/
   font-size: 80%;
   opacity: 0.6;
   line-height: 26px;
-  font-family: ptima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: ptima-Regular, Optima, 'Microsoft YaHei', PingFangSC-light, serif;
 }
 
 #nice .footnote-item p {

@@ -18,8 +18,8 @@ export const wechatFormat = `/* 全局属性
  * 首行缩进 text-indent: 2em;
  */
 #nice p {
-  line-height: 1.6;
-  color: #3f3f3f;
+  line-height: 1.8;
+  color: #000000;
   font-size: 16px;
   margin: 10px 0px;
 }
@@ -42,7 +42,7 @@ export const wechatFormat = `/* 全局属性
   margin: 80px 10px 40px 10px;
   text-align: center;
   font-weight: normal;
-  color: #3f3f3f;
+  color: #000000;
   font-size: 140%;
 }
 
@@ -60,7 +60,7 @@ export const wechatFormat = `/* 全局属性
   text-align: center;
   font-weight: bold;
   line-height: 1.5;
-  color: #3f3f3f;
+  color: #000000;
   font-size: 120%;
 }
 
@@ -75,7 +75,7 @@ export const wechatFormat = `/* 全局属性
 #nice h4 {
   text-align: center;
   line-height: 1.5;
-  color: #3f3f3f;
+  color: #000000;
   font-size: 110%;
 }
 
@@ -118,7 +118,7 @@ export const wechatFormat = `/* 全局属性
 
 /* 引用文字 */
 #nice blockquote p {
-  color: #3f3f3f;
+  color: #000000;
   line-height: 1.5;
   font-size: 16px;
   margin: 10px;

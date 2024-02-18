@@ -1,8 +1,10 @@
 export const wechatFormat = `/* 全局属性
  * 页边距 padding: 30px;
  * 全文字体 font-family: ptima-Regular;
+ * 微信自带字体
+ * font-family: system-ui,-apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Hiragino Sans GB,Microsoft YaHei UI,Microsoft YaHei,Arial,sans-serif;
  * 英文换行 word-break: break-all;
- */
+*/
 #nice {
 }
 

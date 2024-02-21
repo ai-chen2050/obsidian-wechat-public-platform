@@ -3,7 +3,7 @@
 	"name": "Wechat Public Platform",
 	"version": "0.20.8",
 	"minAppVersion": "0.16.0",
-	"description": "Obsidian Wechat public Plugin is a plugin to release article from your Obsidian Vault.",
+	"description": "Release the article from your obsidian vault to WeChat, Baidu Baijiahao, or another article release platform.",
 	"author": "Blake Chan",
 	"authorUrl": "https://ai-chen2050.github.io/",
 	"fundingUrl": "https://www.buymeacoffee.com/blakechan",

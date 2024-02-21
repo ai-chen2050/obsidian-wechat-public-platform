@@ -5,7 +5,7 @@ import ApiManager from './api'
 import { get } from 'svelte/store';
 import pickBy from 'lodash.pickby';
 import { BjhLoginModel } from './LoginModas';
-import { buyMeACoffee } from './consts/global';
+import { buyMeACoffee, commutity, motivation } from './consts/global';
 
 export class WeChatPublicSettingTab extends PluginSettingTab {
 	plugin: WeChatPublic;
@@ -365,7 +365,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		// 创建第三个单元格并添加第三张图片
 		const cell3 = document.createElement('td');
 		const img3 = document.createElement('img');
-		img3.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/commutity.png';
+		img3.src = motivation;
 		img3.style.width = '200px';
 		img3.style.height = 'auto'
 		img3.style.margin = '0 10px'
@@ -375,7 +375,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		// 创建第四个单元格并添加第四张图片
 		const cell4 = document.createElement('td');
 		const img4 = document.createElement('img');
-		img4.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/wechat-motion-qr.png';
+		img4.src = commutity;
 		img4.style.width = '200px';
 		img4.style.height = 'auto'
 		img4.style.margin = '0 10px'

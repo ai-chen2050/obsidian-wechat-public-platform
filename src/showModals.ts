@@ -14,7 +14,7 @@ class WeChatUploadMaterialModal extends Modal {
     onOpen() {
       const { contentEl } = this;
   
-      contentEl.createEl("h1", { text: "Input Material Details" });
+      contentEl.createEl("h1", { text: "Input material details" });
   
       new Setting(contentEl)
         .setName("Path")
@@ -71,7 +71,7 @@ class WeChatDownloadMaterialModal extends Modal {
     onOpen() {
       const { contentEl } = this;
   
-      contentEl.createEl("h1", { text: "Input Download Details" });
+      contentEl.createEl("h1", { text: "Input download details" });
   
       new Setting(contentEl)
         .setName("Type")
@@ -127,11 +127,11 @@ class YoutubeDownloadModal extends Modal {
     onOpen() {
       const { contentEl } = this;
   
-      contentEl.createEl("h1", { text: "Input Youtube Video Source" });
+      contentEl.createEl("h1", { text: "Input youtube video source" });
       
       new Setting(contentEl)
         .setName("video url")
-        .setDesc("video-url: 视频链接")
+        .setDesc("video-url: youtube video url")
         .addText((text) =>
           text.onChange((value) => {
             this.videoUrl = value
@@ -139,7 +139,7 @@ class YoutubeDownloadModal extends Modal {
 
       new Setting(contentEl)
         .setName("video name")
-        .setDesc("video-name: 视频命名")
+        .setDesc("video-name: youtube video name")
         .addText((text) =>
           text.onChange((value) => {
             this.name = value

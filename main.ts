@@ -5,18 +5,9 @@ import { settingsStore } from 'src/settings';
 import { FrontMatterManager } from 'utils/frontmatter';
 import { WeChatUploadMaterialModal, WeChatDownloadMaterialModal, OpenFileModal, CoverIDSuggestModal, FileSuggestModal, YoutubeDownloadModal } from 'src/showModals';
 import { CoverInfo } from 'src/models';
-import { chooseBoundary, jsonToUrlEncoded } from 'utils/cookiesUtil';
-
-interface WeChatPublicSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: WeChatPublicSettings = {
-	mySetting: 'default'
-}
+import { chooseBoundary } from 'utils/cookiesUtil';
 
 export default class WeChatPublic extends Plugin {
-	settings: WeChatPublicSettings;
 	frontManager: FrontMatterManager;
 	apiManager: ApiManager;
 
@@ -49,8 +40,8 @@ export default class WeChatPublic extends Plugin {
 		this.registerContextMenu();
 
 		this.addCommand({
-			id: 'send-all-fans-by-wechatpublic-plugin',
-			name: 'Send to all fans by WeChatPublic plugin【 normal account one shot a day 】',
+			id: 'send-all-wechat-subscribers',
+			name: 'Send to all wechat subscribers【 normal account one shot a day 】',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -63,8 +54,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'release-article-by-wechatpublic-plugin',
-			name: 'Release article by WeChatPublic plugin',
+			id: 'release-article-to-wechat-platform',
+			name: 'Release article to WeChat platform',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -77,8 +68,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'add-draft-by-wechatpublic-plugin',
-			name: 'add draft by WeChatPublic plugin',
+			id: 'add-draft-to-wechat-platform',
+			name: 'add draft to wechat platform',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
 				const basename = file?.basename
@@ -103,8 +94,8 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'upload-material-by-wechatpublic-plugin',
-			name: 'upload material by WeChatPublic plugin.',
+			id: 'upload-material-to-wechat-platform',
+			name: 'upload material to wechat platform',
 			callback: async () => {
 				new WeChatUploadMaterialModal(this.app,async (path, name, type) => {
 					if (path === "" || type === "") {
@@ -170,14 +161,6 @@ export default class WeChatPublic extends Plugin {
 
 	onunload() {
 		new Notice('unloading WeChatPublic plugin at '+ new Date().toLocaleString())
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 
 	// 右键菜单

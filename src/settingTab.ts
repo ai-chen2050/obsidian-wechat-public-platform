@@ -22,7 +22,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: '🌈 Wechat Public Platform Settings'});
+		containerEl.createEl('h2', { text: '🌈 Wechat Public Platform Zone'});
 		if ((get(settingsStore).lastAccessKeyTime + this.expireDuration) <  new Date().getTime()) {
 			this.showWxLogin();
 		} else {
@@ -35,14 +35,14 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		this.setBlacklist();
 		this.setNoteLocationFolder();
 		
-		containerEl.createEl('h2', { text: '🌎 🌞 Baidu Bjh Platform Settings 🔍'});
+		containerEl.createEl('h2', { text: '🌎 🌞 Baidu Bjh Platform Zone 🔍'});
 		if ( get(settingsStore).BjhCookie === '') {
 			this.showBJHLogin();
 		} else {
 			this.showBJHLogout();
 		}
 
-		containerEl.createEl('h2', { text: '👉 📺 Youtube Downloader Settings'});
+		containerEl.createEl('h2', { text: '👉 📺 Youtube Downloader Zone'});
 		this.setYoutubeSaveFolder();
 		this.setProxyIP();
 		this.setVideoResolution();
@@ -365,7 +365,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		// 创建第三个单元格并添加第三张图片
 		const cell3 = document.createElement('td');
 		const img3 = document.createElement('img');
-		img3.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/commutity.jpg';
+		img3.src = 'https://github.com/ai-chen2050/obsidian-wechat-public-platform/raw/master/public/commutity.png';
 		img3.style.width = '200px';
 		img3.style.height = 'auto'
 		img3.style.margin = '0 10px'

@@ -822,6 +822,7 @@ export default class ApiManager {
                 "author": author,
                 "abstract": digest,
                 "content": htmlText2,
+				"auto_mount_goods": "1",
 				"len": htmlText2.length.toString(),
                 "vertical_cover": cover_media_url!,
                 "cover_images": JSON.stringify(cover_images),

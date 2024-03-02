@@ -22,7 +22,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		containerEl.createEl('h2', { text: '🌈 Wechat Public Platform Zone'});
+		new Setting(containerEl).setName('🌈 Wechat public platform zone').setHeading();
 		if ((get(settingsStore).lastAccessKeyTime + this.expireDuration) <  new Date().getTime()) {
 			this.showWxLogin();
 		} else {
@@ -35,14 +35,14 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		this.setBlacklist();
 		this.setNoteLocationFolder();
 		
-		containerEl.createEl('h2', { text: '🌎 🌞 Baidu Bjh Platform Zone 🔍'});
+		new Setting(containerEl).setName('🌎 🌞 Baidu bjh platform zone 🔍').setHeading();
 		if ( get(settingsStore).BjhCookie === '') {
 			this.showBJHLogin();
 		} else {
 			this.showBJHLogout();
 		}
 
-		containerEl.createEl('h2', { text: '👉 📺 Youtube Downloader Zone'});
+		new Setting(containerEl).setName('👉 📺 Youtube downloader zone').setHeading();
 		this.setYoutubeSaveFolder();
 		this.setProxyIP();
 		this.setVideoResolution();
@@ -143,7 +143,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			})
 			.addButton((button) => {
 				return button
-					.setButtonText('Copy Cookie')
+					.setButtonText('Copy cookie')
 					.setCta()
 					.onClick(async () => {
 						const bjhCookie = get(settingsStore).BjhCookie;
@@ -186,7 +186,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 
 	private setNoteLocationFolder(): void {
 		new Setting(this.containerEl)
-			.setName('NoteLocationFolder')
+			.setName('Note location folder')
 			.setDesc('for future using')
 			.addText((input) => {
 				input.setPlaceholder('ur wechat release folder')
@@ -199,7 +199,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 
 	private setDownloadFolder(): void {
 		new Setting(this.containerEl)
-			.setName('DownloadFolder')
+			.setName('Download folder')
 			.setDesc('download folder from wechat public')
 			.addDropdown((dropdown) => {
 				const files = this.app.vault.getAllLoadedFiles();				
@@ -221,7 +221,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 
 	private setYoutubeSaveFolder(): void {
 		new Setting(this.containerEl)
-			.setName('YoutubeSaveFolder')
+			.setName('Youtube save folder')
 			.setDesc('download folder from youtube')
 			.addDropdown((dropdown) => {
 				const files = this.app.vault.getAllLoadedFiles();				
@@ -243,7 +243,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private setBlacklist(): void {
 		new Setting(this.containerEl)
 			.setName('Blacklist')
-			.setDesc('请填写永不会发布的文件夹,多个文件夹使用逗号「,」隔开')
+			.setDesc('Prohibit upload folders, use Comma apart')
 			.addText((input) => {
 				input.setPlaceholder('/self,/key,/secret')
 					 .setValue(get(settingsStore).BlacklistFolder)
@@ -256,7 +256,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private setProxyIP(): void {
 		new Setting(this.containerEl)
 			.setName('ProxyIP')
-			.setDesc('代理 IP, proxy ip for download youtube video')
+			.setDesc('Proxy IP, proxy ip for download youtube video')
 			.addText((input) => {
 				input.setPlaceholder('http://user:pass@111.111.111.111:8080')
 					 .setValue(get(settingsStore).ProxyIP)
@@ -289,7 +289,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	}
 
 	private donation(containerEl: HTMLElement): void {
-		containerEl.createEl('h2', { text: '💰 Support 支持 & Funding 赞助 💰'});
+		new Setting(containerEl).setName('💰 Support 支持 & Funding 赞助 💰').setHeading();
 		containerEl.createEl('br');
 		let div = containerEl.createEl('div');
 	  

@@ -243,7 +243,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private setBlacklist(): void {
 		new Setting(this.containerEl)
 			.setName('Blacklist')
-			.setDesc('Prohibit upload folders, use Comma apart')
+			.setDesc('Prohibit upload folders, use comma apart')
 			.addText((input) => {
 				input.setPlaceholder('/self,/key,/secret')
 					 .setValue(get(settingsStore).BlacklistFolder)

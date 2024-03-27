@@ -71,7 +71,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			})
 			.addButton((button) => {
 				return button
-					.setButtonText('Copy AccessKey')
+					.setButtonText('Copy access key')
 					.setCta()
 					.onClick(async () => {
 						const accesskey = get(settingsStore).accessToken;
@@ -200,7 +200,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private setDownloadFolder(): void {
 		new Setting(this.containerEl)
 			.setName('Download folder')
-			.setDesc('download folder from wechat public')
+			.setDesc('Download folder from wechat public')
 			.addDropdown((dropdown) => {
 				const files = this.app.vault.getAllLoadedFiles();				
 				const folders = pickBy(files, (val: any) => {
@@ -222,7 +222,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private setYoutubeSaveFolder(): void {
 		new Setting(this.containerEl)
 			.setName('Youtube save folder')
-			.setDesc('download folder from youtube')
+			.setDesc('Download folder from youtube')
 			.addDropdown((dropdown) => {
 				const files = this.app.vault.getAllLoadedFiles();				
 				const folders = pickBy(files, (val: any) => {

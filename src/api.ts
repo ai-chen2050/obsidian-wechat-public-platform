@@ -1,4 +1,4 @@
-import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml, FileSystemAdapter } from 'obsidian';
+import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml, FileSystemAdapter, normalizePath } from 'obsidian';
 import { settingsStore } from './settings';
 import { get } from 'svelte/store';
 import {marked} from 'marked'
@@ -165,7 +165,11 @@ export default class ApiManager {
 				const imgresp = await requestUrl(path);
 				blobBytes = imgresp.arrayBuffer
 			} else {
-				const imgfile = this.app.vault.getAbstractFileByPath(path);
+				let nPath = normalizePath(path);
+				if (nPath.startsWith("./")) {
+					nPath = nPath.slice(2);
+				}
+				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
 				if (imgfile instanceof TFile) {
 					const data = await this.app.vault.readBinary(imgfile);
 					blobBytes = data
@@ -597,7 +601,12 @@ export default class ApiManager {
 				const imgresp = await requestUrl(path);
 				blobBytes = imgresp.arrayBuffer
 			} else {
-				const imgfile = this.app.vault.getAbstractFileByPath(path);
+				let nPath = normalizePath(path);
+				if (nPath.startsWith("./")) {
+					nPath = nPath.slice(2);
+				}
+				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
+				console.log(imgfile);
 				if (imgfile instanceof TFile) {
 					const data = await this.app.vault.readBinary(imgfile);
 					blobBytes = data
@@ -674,7 +683,11 @@ export default class ApiManager {
 				const imgresp = await requestUrl(path);
 				blobBytes = imgresp.arrayBuffer
 			} else {
-				const imgfile = this.app.vault.getAbstractFileByPath(path);
+				let nPath = normalizePath(path);
+				if (nPath.startsWith("./")) {
+					nPath = nPath.slice(2);
+				}
+				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
 				if (imgfile instanceof TFile) {
 					const data = await this.app.vault.readBinary(imgfile);
 					blobBytes = data

@@ -37,7 +37,7 @@ export default class WeChatPublic extends Plugin {
 			}).open();
 		});
 		ribbonIconEl.addClass('wechat-pblic-ribbon-class');
-		this.registerContextMenu();
+		// this.registerContextMenu();
 
 		this.addCommand({
 			id: 'send-all-wechat-subscribers',
@@ -124,21 +124,6 @@ export default class WeChatPublic extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'download-youtube-video',
-			name: 'download youtube video',
-			callback: async () => {
-				new YoutubeDownloadModal(this.app,async (videoUrl, name) => {
-					if ((videoUrl === "" || !videoUrl.startsWith('http')) || name === "") {
-						new Notice('Please input correct youtube video url!');
-						return
-					}
-					await this.apiManager.getYoutubeVideo(videoUrl, name)
-                }).open();
-				return
-			}
-		});
-
-		this.addCommand({
 			id: 'publish-baidu-bjh-news',
 			name: 'publish baidu bjh news',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
@@ -162,41 +147,4 @@ export default class WeChatPublic extends Plugin {
 	onunload() {
 		new Notice('unloading WeChatPublic plugin at '+ new Date().toLocaleString())
 	}
-
-	// 右键菜单
-	registerContextMenu() {
-        let addMemu = (mu: Menu, selection: string) => {
-            mu.addItem((item) => {
-                item.setTitle("Download video from youtube")
-                    .setIcon("info")
-                    .onClick(async () => {
-                        this.apiManager.getYoutubeVideo(selection, chooseBoundary());
-                    });
-            });
-        };
-        // markdown 编辑模式 右键菜单
-        this.registerEvent(
-            this.app.workspace.on(
-                "editor-menu",
-                (menu: Menu, editor: Editor, view: MarkdownView) => {
-                    let selection = editor.getSelection();
-                    if (selection || selection.trim().length === selection.length) {
-                        addMemu(menu, selection);
-                    }
-                }
-            )
-        );
-        // markdown 预览模式 右键菜单
-        this.registerDomEvent(document.body, "contextmenu", (evt) => {
-            if ((evt.target as HTMLElement).matchParent(".markdown-preview-view")) {
-                const selection = window.getSelection()!.toString().trim();
-                if (!selection) return;
-
-                evt.preventDefault();
-                let menu = new Menu();
-                addMemu(menu, selection);
-                menu.showAtMouseEvent(evt);
-            }
-        });
-    }
 }

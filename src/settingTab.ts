@@ -42,11 +42,6 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			this.showBJHLogout();
 		}
 
-		new Setting(containerEl).setName('👉 📺 Youtube downloader zone').setHeading();
-		this.setYoutubeSaveFolder();
-		this.setProxyIP();
-		this.setVideoResolution();
-
 		this.donation(containerEl);
 	}
 
@@ -149,10 +144,10 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 						const bjhCookie = get(settingsStore).BjhCookie;
 						navigator.clipboard.writeText(bjhCookie).then(
 							function () {
-								new Notice('拷贝Cookie到剪切板成功！');
+								new Notice('拷贝Cookie到剪切板成功!');
 							},
 							function (error) {
-								new Notice('拷贝Cookie到剪切板失败！');
+								new Notice('拷贝Cookie到剪切板失败!');
 								console.error('拷贝百家号Cookie失败', error);
 							}
 						);

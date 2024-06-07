@@ -22,7 +22,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-		new Setting(containerEl).setName('🌈 Wechat public platform zone').setHeading();
+		new Setting(containerEl).setName('🌈 Wechat public platform').setHeading();
 		if ((get(settingsStore).lastAccessKeyTime + this.expireDuration) <  new Date().getTime()) {
 			this.showWxLogin();
 		} else {
@@ -35,7 +35,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		this.setBlacklist();
 		this.setNoteLocationFolder();
 		
-		new Setting(containerEl).setName('🌎 🌞 Baidu bjh platform zone 🔍').setHeading();
+		new Setting(containerEl).setName('🌎 🌞 Baidu bjh platform 🔍').setHeading();
 		if ( get(settingsStore).BjhCookie === '') {
 			this.showBJHLogin();
 		} else {
@@ -48,11 +48,11 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private showWxLogout(): void {
 		document.createRange().createContextualFragment;
 		const desc = document.createRange().createContextualFragment(
-			`若要退出清理 Secret,请点击 clean secret`
+			`If you want to clean secret,please click at clean secret`
 		);
 
 		new Setting(this.containerEl)
-			.setName(`微信公众平台已登录,当前 APP-ID: ${get(settingsStore).appid}`)
+			.setName(`Wechat platform haved login, APP-ID: ${get(settingsStore).appid}`)
 			.setDesc(desc)
 			.addButton((button) => {
 				return button
@@ -72,11 +72,11 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 						const accesskey = get(settingsStore).accessToken;
 						navigator.clipboard.writeText(accesskey).then(
 							function () {
-								new Notice('拷贝AccessKey到剪切板成功！');
+								new Notice('Copy access-key to clipboard succeed!');
 							},
 							function (error) {
-								new Notice('拷贝AccessKey到剪切板失败！');
-								console.error('拷贝微信公众平台AccessKey失败', error);
+								new Notice('Copy access-key to clipboard failed!');
+								console.error('Copy access-key to clipboard failed!', error);
 							}
 						);
 					});
@@ -85,10 +85,10 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 
 	private showWxLogin(): void {
 		const desc = document.createRange().createContextualFragment(
-			`测试前请先填写 [appid] 和 [secretkey], 此外请联系管理员将自己的外网 IP 添加至白名单。https://tool.lu/ip/`
+			`Before the test, enter [appid] and [secretkey], and contact the administrator to whitelist your external IP address. https://tool.lu/ip/`
 		);
 
-		new Setting(this.containerEl).setName('测试微信公众平台 API')
+		new Setting(this.containerEl).setName('Test the wechat public API')
 			.setDesc(desc)
 			.addButton((button) => {
 				return button
@@ -104,9 +104,9 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	}
 
 	private showBJHLogin(): void {
-		new Setting(this.containerEl).setName('登录百家号').addButton((button) => {
+		new Setting(this.containerEl).setName('Login bjh platform').addButton((button) => {
 			return button
-				.setButtonText('登录')
+				.setButtonText('Login')
 				.setCta()
 				.onClick(async () => {
 					button.setDisabled(true);
@@ -120,11 +120,11 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 	private showBJHLogout(): void {
 		document.createRange().createContextualFragment;
 		const desc = document.createRange().createContextualFragment(
-			`若要退出清理 Cookie,请点击 clean cookie`
+			`If you want to clean cookie & exit,please click at clean cookie`
 		);
 
 		new Setting(this.containerEl)
-			.setName(`百家号已登录: [ ${get(settingsStore).BjhName} ]`)
+			.setName(`Bjh platform haved logined: [ ${get(settingsStore).BjhName} ]`)
 			.setDesc(desc)
 			.addButton((button) => {
 				return button
@@ -144,11 +144,11 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 						const bjhCookie = get(settingsStore).BjhCookie;
 						navigator.clipboard.writeText(bjhCookie).then(
 							function () {
-								new Notice('拷贝Cookie到剪切板成功!');
+								new Notice('Copy cookie to clipboard succeed!');
 							},
 							function (error) {
-								new Notice('拷贝Cookie到剪切板失败!');
-								console.error('拷贝百家号Cookie失败', error);
+								new Notice('Copy cookie to clipboard failed!');
+								console.error('Copy cookie to clipboard failed!', error);
 							}
 						);
 					});
@@ -261,46 +261,11 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			});
 	}
 
-	private setVideoResolution(): void {
-		new Setting(this.containerEl)
-			.setName('视频分辨率')
-			.setDesc('默认最高分辨率,video resolution from youtube,default is heightest')
-			.addDropdown((dropdown) => {
-				const values = {
-					'hd360': 'hd360',
-					'hd720': 'hd720',
-					'default': 'default'
-				};
-
-				Object.keys(values).forEach((val) => {
-					dropdown.addOption(val, val);
-				});
-				return dropdown
-					.setValue(get(settingsStore).VideoResolution)
-					.onChange(async (value) => {
-						settingsStore.actions.setVideoResolution(value);
-					});
-			});
-	}
-
 	private donation(containerEl: HTMLElement): void {
-		new Setting(containerEl).setName('💰 Support 支持 & Funding 赞助 💰').setHeading();
+		new Setting(containerEl).setName('💰 Support & Funding 💰').setHeading();
 		containerEl.createEl('br');
 		let div = containerEl.createEl('div');
 	  
-		const donateTextZH = document.createElement('p');
-		donateTextZH.appendText(
-		'如果您觉得这个插件帮助到您了，为您提供了价值，欢迎赞助我以持续开发迭代本插件。' +
-			'您可以使用如下微信/ WeChat 二维码以赞助开发者: 🧡🧡 👏🏻👏🏻',
-		);
-		donateTextZH.style.textAlign = 'center';
-		donateTextZH.style.width = '70%';
-		donateTextZH.style.margin = '0 auto';
-		div.appendChild(donateTextZH);
-		
-		div = this.createDonateQRC(div);
-
-		div.appendChild(containerEl.createEl('br'));
 		const donateText = document.createElement('p');
 		donateText.appendText(
 		'If this plugin adds value for you and you would like to help support ' +
@@ -310,6 +275,18 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		donateText.style.width = '70%';
 		donateText.style.margin = '0 auto';
 		div.appendChild(donateText);
+		div = this.createDonateQRC(div);
+
+		div.appendChild(containerEl.createEl('br'));
+		const donateTextZH = document.createElement('p');
+		donateTextZH.appendText(
+		'如果您觉得这个插件帮助到您了，为您提供了价值，欢迎赞助我以持续开发迭代本插件。' +
+			'您可以使用如下微信/ WeChat 二维码以赞助开发者: 🧡🧡 👏🏻👏🏻',
+		);
+		donateTextZH.style.textAlign = 'center';
+		donateTextZH.style.width = '70%';
+		donateTextZH.style.margin = '0 auto';
+		div.appendChild(donateTextZH);
 		
 		div.appendChild(containerEl.createEl('br'));
 		const parser = new DOMParser();

@@ -15,7 +15,7 @@ interface WechatPublicPluginSettings {
 	VideoResolution: string;	// video resolution
 	BjhJwtToken: string;		// baidu bjh jwt token
 	BjhCookie: string; 			// baidu bjh cookie
-	BjhName: string; 			// baidu bjh name
+	BjhUserName: string; 			// baidu bjh name
 	BjhAppID: string; 			// baidu bjh appid
 }
 
@@ -33,7 +33,7 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	VideoResolution: '',
 	BjhCookie: '',
 	BjhJwtToken: '',
-	BjhName: '',
+	BjhUserName: '',
 	BjhAppID: '',
 };
 
@@ -85,7 +85,7 @@ const createSettingsStore = () => {
 			state.BjhCookie = '';
 			state.BjhJwtToken = '';
 			state.BjhAppID = '';
-			state.BjhName = '';
+			state.BjhUserName = '';
 			return state;
 		});
 	};
@@ -171,7 +171,7 @@ const createSettingsStore = () => {
 
 	const setBjhName = (BjhName: string) => {
 		store.update((state) => {
-			state.BjhName = BjhName;
+			state.BjhUserName = BjhName;
 			return state;
 		});
 	};

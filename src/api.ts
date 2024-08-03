@@ -12,10 +12,6 @@ import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
 import { chooseBoundary, isWebp, jsonToUrlEncoded } from 'utils/cookiesUtil';
 
-import fs from "fs";
-import ytdl from 'ytdl-core';
-import { HttpsProxyAgent } from 'https-proxy-agent';
-
 export default class ApiManager {
 	app: App;
 
@@ -248,7 +244,7 @@ export default class ApiManager {
 		}
 	}
 
-	async newDraftToWechat(title: string, content: string, frontmatter: FrontMatterCache, only_id: string = ""): Promise<string |undefined> {
+	async newDraftToWechat(filePath: string, title: string, content: string, frontmatter: FrontMatterCache, only_id: string = ""): Promise<string |undefined> {
         try {
             const setings = get(settingsStore)
             const pass = await this.refreshAccessToken(setings.appid, setings.secret)
@@ -290,7 +286,7 @@ export default class ApiManager {
 				}
 			}
 			
-			const MdImagedContent = await this.handleMDImage(content, 'wx')
+			const MdImagedContent = await this.handleMDImage(filePath, content, 'wx')
 			const htmlText = await marked.parse(MdImagedContent)
 			const htmlText1 = this.formatCodeHTML(htmlText)
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`)
@@ -542,16 +538,16 @@ export default class ApiManager {
 		}
 	}
 
-	async handleMDImage(content: string, to: string): Promise<string> {
+	async handleMDImage(filePath:string, content: string, to: string): Promise<string> {
 		const imageRegex = /!\[.*?\]\((.*?)\)/g;	// for ![]()
 		const matches = Array.from(content.matchAll(imageRegex));
 		const promises = matches.map(async (match) => {
 			const imagePath = match[1];
 			let responseUrl;
 			if (to === 'wx') {
-				responseUrl = await this.uploadImageToWx(imagePath, "");
+				responseUrl = await this.uploadImageToWx(filePath, imagePath, "");
 			} else if(to === 'bjh') {
-				responseUrl = await this.uploadImageToBjh(imagePath, "");
+				responseUrl = await this.uploadImageToBjh(filePath, imagePath, "");
 			}
 			return {
 				match,
@@ -564,7 +560,7 @@ export default class ApiManager {
 		const promises2 = matches2.map(async (match) => {
 			const imagePath = match[1];
 			const imgfile: TFile | undefined = this.app.vault.getFiles().find((value) => value.name === imagePath);
-			const responseUrl = await this.uploadImageToWx(imgfile?.path!, "");
+			const responseUrl = await this.uploadImageToWx(filePath, imgfile?.path!, "");
 			return {
 				match,
 				responseUrl
@@ -588,7 +584,7 @@ export default class ApiManager {
 		return parsedContent
 	}
 
-	async uploadImageToWx(path: string, fileName: string): Promise<string |undefined> {
+	async uploadImageToWx(filePath:string, imgpath: string, fileName: string): Promise<string |undefined> {
         try {
 			const setings = get(settingsStore)
 			const pass = await this.refreshAccessToken(setings.appid, setings.secret)
@@ -597,13 +593,13 @@ export default class ApiManager {
 			}
 
 			let blobBytes: ArrayBuffer | null = null;
-			if (path.startsWith("http")) {
-				const imgresp = await requestUrl(path);
+			if (imgpath.startsWith("http")) {
+				const imgresp = await requestUrl(imgpath);
 				blobBytes = imgresp.arrayBuffer
 			} else {
-				let nPath = normalizePath(path);
+				let nPath = normalizePath(imgpath);
 				if (nPath.startsWith("./")) {
-					nPath = nPath.slice(2);
+					nPath = filePath + nPath.slice(1);
 				}
 				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
 				console.log(imgfile);
@@ -621,7 +617,7 @@ export default class ApiManager {
 			let formDataString = '';
 			formDataString += '--' + boundary + '\r\n';
 			
-			const contentType = mime.contentType(path);
+			const contentType = mime.contentType(imgpath);
 			formDataString += `Content-Disposition: form-data; name="media"; filename=\"${fileName}.png\"` + '\r\n';
 			formDataString += `Content-Type: ${contentType}` + '\r\n\r\n';
 
@@ -675,17 +671,17 @@ export default class ApiManager {
 		}
 	}
 
-	async uploadImageToBjh(path: string, fileName: string): Promise<string |undefined> {
+	async uploadImageToBjh(filePath:string, imgpath: string, fileName: string): Promise<string |undefined> {
         try {
 			const setings = get(settingsStore)
 			let blobBytes: ArrayBuffer | null = null;
-			if (path.startsWith("http")) {
-				const imgresp = await requestUrl(path);
+			if (imgpath.startsWith("http")) {
+				const imgresp = await requestUrl(imgpath);
 				blobBytes = imgresp.arrayBuffer
 			} else {
-				let nPath = normalizePath(path);
+				let nPath = normalizePath(imgpath);
 				if (nPath.startsWith("./")) {
-					nPath = nPath.slice(2);
+					nPath = filePath + nPath.slice(1);
 				}
 				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
 				if (imgfile instanceof TFile) {
@@ -716,7 +712,7 @@ export default class ApiManager {
 			formDataString += '--' + boundary + '\r\n';
 			formDataString += `Content-Disposition: form-data; name="article_type"` + '\r\n\r\n' + 'news' + '\r\n';
 			formDataString += '--' + boundary + '\r\n';
-			let contentType = mime.contentType(path);
+			let contentType = mime.contentType(imgpath);
 			if (contentType !== "image/jpeg" && contentType !== "image/png" && contentType !== "image/jpg") {
 				contentType = "image/png";
 			}
@@ -783,7 +779,7 @@ export default class ApiManager {
 		}
 	}
 
-	async publishToBjh(title: string, content: string, frontmatter: FrontMatterCache): Promise<string |undefined> {
+	async publishToBjh(filePath: string, title: string, content: string, frontmatter: FrontMatterCache): Promise<string |undefined> {
         try {
 			const setings = get(settingsStore);
 			await this.refreshBJHToken(setings.BjhCookie, setings.BjhJwtToken);
@@ -798,9 +794,9 @@ export default class ApiManager {
 			let author = ""; let digest = "";
 			if (frontmatter !== undefined) {
 				if( frontmatter["banner"] !== undefined && frontmatter["banner"] !== ""){
-					cover_media_url = await this.uploadImageToBjh(frontmatter["banner"], title+"_banner");
+					cover_media_url = await this.uploadImageToBjh(filePath, frontmatter["banner"], title+"_banner");
 				} else if( frontmatter["banner_path"] !== undefined && frontmatter["banner_path"] !== ""){
-					cover_media_url = await this.uploadImageToBjh(frontmatter["banner_path"], title+"_banner");
+					cover_media_url = await this.uploadImageToBjh(filePath, frontmatter["banner_path"], title+"_banner");
 				}
 
 				if (cover_media_url === "" && frontmatter["banner"] === undefined && frontmatter["banner_path"] === undefined) {
@@ -813,7 +809,7 @@ export default class ApiManager {
 				new Notice('Please set banner of article, banner, banner_path in file frontManager');
 				return
 			}
-			const MdImagedContent = await this.handleMDImage(content, 'bjh')
+			const MdImagedContent = await this.handleMDImage(filePath, content, 'bjh')
 			const htmlText = await marked.parse(MdImagedContent)
 			const htmlText1 = this.formatCodeHTML(htmlText)
 			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`) + `<img src="${cover_media_url}"><br>`
@@ -893,41 +889,4 @@ export default class ApiManager {
 			return "no";
 		}
 	}
-
-	async getYoutubeVideo(videoUrl: string, name: string) {
-		try {
-			const fadp = this.app.vault.adapter as FileSystemAdapter;
-			const setings = get(settingsStore)
-			const agent = new HttpsProxyAgent(setings.ProxyIP);
-			let stream;
-			const  videores = setings.VideoResolution
-			if ( videores=== '' || videores === 'default') {
-				stream = ytdl(videoUrl, { requestOptions: { agent }, });
-			} else {
-				stream = ytdl(videoUrl,{ quality: videores, requestOptions: { agent } });
-			}
-
-			new Notice('Starting Download', 10000)
-			const filePath = `${fadp.getBasePath()}/${setings.youtubeSaveFolder}/${name}.mp4`
-			const writableStream = fs.createWriteStream(filePath);
-
-			stream.on('data', (chunk:any) => {
-				writableStream.write(chunk); // 将 chunk 写入到文件
-			});
-
-			stream.on('error', (err:Error) => {
-				new Notice(err.message);
-				console.error(err);
-			});
-
-			stream.on('end', () => {
-				new Notice('Finished', 30000);
-				writableStream.end(); // 关闭可写流
-			});
-		} catch (e) {
-			new Notice('Failed: ' + e, 30000);
-			console.error('download youtube video err: ' + e);
-		}
-	}
-	
 }

@@ -256,27 +256,6 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 			});
 	}
 
-	private setYoutubeSaveFolder(): void {
-		new Setting(this.containerEl)
-			.setName("Youtube save folder")
-			.setDesc("Download folder from youtube")
-			.addDropdown((dropdown) => {
-				const files = this.app.vault.getAllLoadedFiles();
-				const folders = pickBy(files, (val: any) => {
-					return val instanceof TFolder;
-				});
-
-				Object.values(folders).forEach((val: TFolder) => {
-					dropdown.addOption(val.path, val.path);
-				});
-				return dropdown
-					.setValue(get(settingsStore).youtubeSaveFolder)
-					.onChange(async (value) => {
-						settingsStore.actions.setYoutubeSaveFolder(value);
-					});
-			});
-	}
-
 	private setBlacklist(): void {
 		new Setting(this.containerEl)
 			.setName("Blacklist")
@@ -287,20 +266,6 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 					.setValue(get(settingsStore).BlacklistFolder)
 					.onChange((value: string) => {
 						settingsStore.actions.setBlacklistFolder(value);
-					});
-			});
-	}
-
-	private setProxyIP(): void {
-		new Setting(this.containerEl)
-			.setName("ProxyIP")
-			.setDesc("Proxy IP, proxy ip for download youtube video")
-			.addText((input) => {
-				input
-					.setPlaceholder("http://user:pass@111.111.111.111:8080")
-					.setValue(get(settingsStore).ProxyIP)
-					.onChange((value: string) => {
-						settingsStore.actions.setProxyIP(value);
 					});
 			});
 	}

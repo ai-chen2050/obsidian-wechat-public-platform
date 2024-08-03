@@ -10,9 +10,6 @@ interface WechatPublicPluginSettings {
 	downloadFolder: string;	// for automatic release using, wechat article save folder
 	noteLocationFolder: string;	// for automatic release using
 	BlacklistFolder: string;
-	youtubeSaveFolder: string;	// youtube video save folder
-	ProxyIP: string;	// proxy IP for download youtube
-	VideoResolution: string;	// video resolution
 	BjhJwtToken: string;		// baidu bjh jwt token
 	BjhCookie: string; 			// baidu bjh cookie
 	BjhUserName: string; 			// baidu bjh name
@@ -26,11 +23,8 @@ const DEFAULT_SETTINGS: WechatPublicPluginSettings = {
 	lastAccessKeyTime: -1,
 	isTokenValid: false,
 	downloadFolder: '',
-	youtubeSaveFolder: '',
 	noteLocationFolder: '',
 	BlacklistFolder: '',
-	ProxyIP: '',
-	VideoResolution: '',
 	BjhCookie: '',
 	BjhJwtToken: '',
 	BjhUserName: '',
@@ -126,31 +120,10 @@ const createSettingsStore = () => {
 			return state;
 		});
 	};
-
-	const setYoutubeSaveFolder = (value: string) => {
-		store.update((state) => {
-			state.youtubeSaveFolder = value;
-			return state;
-		});
-	};
 	
 	const setBlacklistFolder = (notebookBlacklist: string) => {
 		store.update((state) => {
 			state.BlacklistFolder = notebookBlacklist;
-			return state;
-		});
-	};
-
-	const setProxyIP = (ProxyIP: string) => {
-		store.update((state) => {
-			state.ProxyIP = ProxyIP;
-			return state;
-		});
-	};
-
-	const setVideoResolution = (Resolution: string) => {
-		store.update((state) => {
-			state.VideoResolution = Resolution;
 			return state;
 		});
 	};
@@ -195,9 +168,6 @@ const createSettingsStore = () => {
 			clearSecret,
 			clearBjhCookie,
 			setBlacklistFolder,
-			setYoutubeSaveFolder,
-			setProxyIP,
-			setVideoResolution,
 			setBjhCookie,
 			setBjhJwtToken,
 			setBjhName,

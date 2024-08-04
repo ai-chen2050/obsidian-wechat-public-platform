@@ -260,6 +260,7 @@ export  const basicStyle  = `/*默认样式，最佳实践*/
 }
 
 /* 微信代码块 */
+/* background-color: rgba(0,0,0,0.03);*/
 #nice .code-snippet__fix {
   word-wrap: break-word !important;
   font-size: 14px;

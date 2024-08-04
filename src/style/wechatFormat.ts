@@ -173,9 +173,10 @@ export const wechatFormat = `/* 全局属性
 #nice figcaption {
 }
 
-/* 行内代码 */
+/* 行内代码
+ *  background: #f8f5ec;
+*/
 #nice p code, #nice li code {
-  background: #f8f5ec;
   color: #ff3502;
   line-height: 1.5;
   font-size: 14px;
@@ -186,9 +187,9 @@ export const wechatFormat = `/* 全局属性
 /* 非微信代码块
  * 代码块不换行 display: -webkit-box !important;
  * 代码块换行 display: block;
+ * background: #f8f5ec;
  */
 #nice pre code {
-  background: #f8f5ec;
   font-size: 14px;
   display: block;
 }

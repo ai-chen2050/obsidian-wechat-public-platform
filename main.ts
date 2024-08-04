@@ -12,7 +12,7 @@ export default class WeChatPublic extends Plugin {
 	apiManager: ApiManager;
 
 	async onload() {
-		new Notice('loading WeChatPublic plugin at '+ new Date().toLocaleString())
+		new Notice('Loading WeChatPublic plugin at '+ new Date().toLocaleString())
 		settingsStore.initialise(this);
 		this.frontManager = new FrontMatterManager(this.app);
 		this.apiManager = new ApiManager(this.app);

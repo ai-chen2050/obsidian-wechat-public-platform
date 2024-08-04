@@ -84,7 +84,6 @@ export default class WeChatPublic extends Plugin {
 			name: 'add draft to wechat platform',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
-				console.log(file?.path);
 				let filePath = "";
 				if (file?.path !== undefined) {
 					filePath = splitPathAndFile(file?.path)[0];

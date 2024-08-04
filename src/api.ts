@@ -11,6 +11,8 @@ import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 
 import { ArticleElement, Articles, BatchGetMaterial, CoverInfo, MDFrontMatterContent, MediaItem, NewsItem } from './models';
 import { chooseBoundary, isWebp, jsonToUrlEncoded } from 'utils/cookiesUtil';
+import { markedParse, ParseOptions } from './markdown/parse';
+import { calloutStyle } from './style/callouts';
 
 export default class ApiManager {
 	app: App;
@@ -59,7 +61,7 @@ export default class ApiManager {
 		html = html.replace(/<mjx-assistive-mml.+?<\/mjx-assistive-mml>/g, "");
 		let res = "";
 		try {
-			res = juice.inlineContent(html, basicStyle + wechatFormat + codeStyle + "", {
+			res = juice.inlineContent(html, basicStyle + wechatFormat + codeStyle + calloutStyle +"", {
 				inlinePseudoElements: true,
 				preserveImportant: true,
 			});
@@ -287,9 +289,18 @@ export default class ApiManager {
 			}
 			
 			const MdImagedContent = await this.handleMDImage(filePath, content, 'wx')
-			const htmlText = await marked.parse(MdImagedContent)
-			const htmlText1 = this.formatCodeHTML(htmlText)
-			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText1 +`</section>`)
+			// todo: move to other please
+			const parseOptions:ParseOptions = {
+				lineNumber: true,
+				linkStyle: 'footnote'
+			};
+
+			const htmlText = await markedParse(MdImagedContent, parseOptions, [])
+			
+			// console.log(htmlText + "\n");
+			// const htmlText1 = this.formatCodeHTML(htmlText)
+			// console.log(htmlText1 + "\n");
+			const htmlText2 = this.solveHTML(`<section id="nice">` + htmlText +`</section>`)
 			// console.log(htmlText2);
 			// return
 
@@ -602,7 +613,7 @@ export default class ApiManager {
 					nPath = filePath + nPath.slice(1);
 				}
 				const imgfile = this.app.vault.getAbstractFileByPath(nPath);
-				console.log(imgfile);
+				// console.log(imgfile);
 				if (imgfile instanceof TFile) {
 					const data = await this.app.vault.readBinary(imgfile);
 					blobBytes = data

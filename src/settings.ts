@@ -39,7 +39,7 @@ const createSettingsStore = () => {
 	const initialise = async (plugin: WeChatPublic): Promise<void> => {
 		const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 		const settings: WechatPublicPluginSettings = { ...data };
-		// console.log('--------init get access token------');
+		// console.log('--------wechatpublic: init get access token------');
 		if (settings.accessToken !== '') {
 			setAccessToken(settings.accessToken);
 		} else {

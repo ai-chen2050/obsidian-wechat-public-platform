@@ -12,6 +12,7 @@ export default class WeChatPublic extends Plugin {
 	apiManager: ApiManager;
 
 	async onload() {
+		new Notice('loading WeChatPublic plugin at '+ new Date().toLocaleString())
 		settingsStore.initialise(this);
 		this.frontManager = new FrontMatterManager(this.app);
 		this.apiManager = new ApiManager(this.app);
@@ -84,7 +85,6 @@ export default class WeChatPublic extends Plugin {
 			name: 'add draft to wechat platform',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const file = view.file
-				console.log(file?.path);
 				let filePath = "";
 				if (file?.path !== undefined) {
 					filePath = splitPathAndFile(file?.path)[0];

@@ -178,7 +178,7 @@ export const wechatFormat = `/* 全局属性
   background: #f8f5ec;
   color: #ff3502;
   line-height: 1.5;
-  font-size: 90%;
+  font-size: 14px;
   padding: 3px 5px;
   border-radius: 2px;
 }
@@ -189,6 +189,7 @@ export const wechatFormat = `/* 全局属性
  */
 #nice pre code {
   background: #f8f5ec;
+  font-size: 14px;
   display: block;
 }
 

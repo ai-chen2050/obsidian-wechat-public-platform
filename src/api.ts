@@ -1,4 +1,4 @@
-import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml, FileSystemAdapter, normalizePath } from 'obsidian';
+import { Notice, requestUrl, request, RequestUrlParam, Platform, FrontMatterCache, TFile, App, Vault, stringifyYaml, FileSystemAdapter, normalizePath, PluginManifest } from 'obsidian';
 import { settingsStore } from './settings';
 import { get } from 'svelte/store';
 import {marked} from 'marked'
@@ -16,9 +16,17 @@ import { calloutStyle } from './style/callouts';
 
 export default class ApiManager {
 	app: App;
+	manifest: PluginManifest;
+	pluginPath: string;
+	customCssPath: string;
+	customCss: string;
 
-	constructor(app: App) {
+	constructor(app: App, manifest: PluginManifest) {
         this.app = app;
+		this.manifest = manifest;
+		this.pluginPath = this.app.vault.configDir + '/plugins/' + this.manifest.id;
+		this.customCssPath = this.pluginPath + '/custom.css';
+		this.setCostomCss();
     }
 
 	readonly baseWxUrl: string = 'https://api.weixin.qq.com/cgi-bin';
@@ -52,6 +60,20 @@ export default class ApiManager {
 		});
 	}
 
+	public async setCostomCss() {
+		try {
+			new Notice('Custom css activated');
+			const cssContent = await this.app.vault.adapter.read(this.customCssPath);
+            this.customCss = cssContent;
+		} catch (error) {
+			this.customCss = "";
+			new Notice('No custom.css, use default css');
+			console.error("Error reading custom.css:", error);
+			// You can set customStyle to a default value or leave it empty
+			// customStyle = '/* default styles */';
+		}
+	}
+
 	public solveHTML(html: string): string {
 		html = html.replace(/<mjx-container (class="inline.+?)<\/mjx-container>/g, "<span $1</span>");
 		html = html.replace(/\s<span class="inline/g, '&nbsp;<span class="inline');
@@ -61,7 +83,7 @@ export default class ApiManager {
 		html = html.replace(/<mjx-assistive-mml.+?<\/mjx-assistive-mml>/g, "");
 		let res = "";
 		try {
-			res = juice.inlineContent(html, basicStyle + wechatFormat + codeStyle + calloutStyle +"", {
+			res = juice.inlineContent(html, basicStyle + wechatFormat + codeStyle + calloutStyle + this.customCss, {
 				inlinePseudoElements: true,
 				preserveImportant: true,
 			});
@@ -148,6 +170,55 @@ export default class ApiManager {
 			settingsStore.actions.setBjhJwtToken(respAccessToken);
 		}
 		return true;
+	}
+
+	getCustomCssURL() {
+        const version = this.manifest.version;
+        return `https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases/download/${version}/custom.css`;
+    }
+
+    async downloadCustomCss() {
+        try {
+            if (await this.app.vault.adapter.exists(this.customCssPath)) {
+                new Notice('Custom css file exists.')
+                return;
+            }
+            const res = await requestUrl(this.getCustomCssURL());
+            const data = res.arrayBuffer;
+			const decoder = new TextDecoder('utf-8');
+			await this.app.vault.adapter.write(this.customCssPath, decoder.decode(data));
+            new Notice('Download Custom css file completion');
+        } catch (error) {
+            console.error(error);
+            await this.removeCustomCss();
+            new Notice('Download failed, please check the network!');
+        }
+    }
+
+    async removeCustomCss() {
+        try {
+            const adapter = this.app.vault.adapter;
+            if (await adapter.exists(this.customCssPath)) {
+                await adapter.remove(this.customCssPath);
+            }
+            new Notice('Empty complete!');
+        } catch (error) {
+            console.error(error);
+            new Notice('Failed to clear theme!');
+        }
+    }
+
+	async openPluginFolder() {
+	    const path = require('path');
+        const adapter = this.app.vault.adapter as FileSystemAdapter;
+		const vaultRoot = adapter.getBasePath();
+		const plugin = this.pluginPath;
+        if (!await adapter.exists(plugin)) {
+            await adapter.mkdir(plugin);
+        }
+		const dst = path.join(vaultRoot, plugin);
+		const { shell } = require('electron');
+		shell.openPath(dst);
 	}
     
 	async uploadMaterial(path: string, fileType: string, fileName: string): Promise<string |undefined> {

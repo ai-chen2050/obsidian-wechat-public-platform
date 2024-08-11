@@ -15,7 +15,7 @@ export default class WeChatPublic extends Plugin {
 		new Notice('Loading WeChatPublic plugin at '+ new Date().toLocaleString())
 		settingsStore.initialise(this);
 		this.frontManager = new FrontMatterManager(this.app);
-		this.apiManager = new ApiManager(this.app);
+		this.apiManager = new ApiManager(this.app, this.manifest);
 
 		const ribbonIconEl = this.addRibbonIcon("send", '发布到草稿箱', (evt: MouseEvent) => {
 			new FileSuggestModal(this.app, this.app.vault.getMarkdownFiles(), async (file: TFile) => {

@@ -39,6 +39,7 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 		this.setDownloadFolder();
 		this.setBlacklist();
 		this.setNoteLocationFolder();
+		this.downloadCustomCss();
 
 		new Setting(containerEl)
 			.setName("🌎 🌞 Baidu bjh platform 🔍")
@@ -231,6 +232,32 @@ export class WeChatPublicSettingTab extends PluginSettingTab {
 					.onChange((value: string) => {
 						settingsStore.actions.setNoteLocationFolder(value);
 					});
+			});
+	}
+
+	private downloadCustomCss(): void {
+		new Setting(this.containerEl)
+			.setName("Custom css")
+			.setDesc("Customize article formatting")
+			.addButton((button) => {
+				button.setButtonText("Download");
+				button.onClick(async () => {
+					button.setButtonText("Download ...");
+					await this.plugin.apiManager.downloadCustomCss();
+					button.setButtonText("Download Complete");
+				});
+			})
+			.addButton((button) => {
+				button.setButtonText("Clean");
+				button.onClick(async () => {
+					await this.plugin.apiManager.removeCustomCss();
+				});
+			})
+			.addButton((button) => {
+				button.setIcon("folder-open");
+				button.onClick(async () => {
+					await this.plugin.apiManager.openPluginFolder();
+				});
 			});
 	}
 

@@ -1,11 +1,10 @@
-## 0.30.0
+## 1.0.2
 
 Feat
-bugfix: support related path image to upload
+feat: support custom.css format configuration
 
 功能
-修复文章中图片不支持相对路径的功能
-
+支持 配置修改自定义样式 custom.css
 
 ## 0.30.6
 
@@ -17,3 +16,12 @@ bugfix: support callout format & fix code display
 
 > [!note]
 > hello
+
+
+## 0.30.0
+
+Feat
+bugfix: support related path image to upload
+
+功能
+修复文章中图片不支持相对路径的功能

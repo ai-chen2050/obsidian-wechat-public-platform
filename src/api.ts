@@ -62,9 +62,11 @@ export default class ApiManager {
 
 	public async setCostomCss() {
 		try {
-			new Notice('Custom css activated');
 			const cssContent = await this.app.vault.adapter.read(this.customCssPath);
             this.customCss = cssContent;
+			if (cssContent !== "") {
+				new Notice('Custom css activated');
+			}
 		} catch (error) {
 			this.customCss = "";
 			new Notice('No custom.css, use default css');

@@ -82,6 +82,12 @@ digest: ""
 - 微信平台请求用户将客户端IP加入服务器白名单。 它与 API 密钥和秘密在同一页面。
 - 您可以在[此处](https://tool.lu/ip/)找到您的外网IP。
 - 如果你的网络ip是[192.168.66.66]，则输入ip [192.168.0.0/16]或[192.168.66.66], 因为有的 IP 可能会变动。
+
+### 自定义样式与主题 
+
+请参照这个页面 [this page](https://github.com/ai-chen2050/obsidian-wechat-public-platform/issues/10).
+
+设置后需要重启插件，再次使用才可生效。
   
 ## Wechat public API
 [Wechat API](./docs/wepublic.md)

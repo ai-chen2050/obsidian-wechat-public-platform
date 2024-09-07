@@ -86,6 +86,12 @@ digest: ""
 - You could find your outneter ip in [here](https://tool.lu/ip/). 
 - And put ip [192.168.0.0/16] or [192.168.66.66] if you out network ip is [192.168.66.66]
 
+### custom css & themes
+
+please refer to [this page](https://github.com/ai-chen2050/obsidian-wechat-public-platform/issues/10).
+
+The Settings take effect only after the plug-in is restarted.
+
 ## Wechat public API
 [Wechat API](./docs/wepublic.md)
 

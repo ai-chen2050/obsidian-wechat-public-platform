@@ -1,0 +1,25 @@
+name: Publish CLI to npm
+
+on:
+    push:
+        tags:
+            - "cli-v*"
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+                  registry-url: https://registry.npmjs.org/
+            - name: Install dependencies
+              run: npm install
+            - name: Build CLI
+              run: npm run build:cli
+            - name: Publish
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

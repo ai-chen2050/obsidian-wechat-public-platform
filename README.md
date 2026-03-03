@@ -6,23 +6,21 @@
 [![Github all releases](https://img.shields.io/github/downloads/ai-chen2050/obsidian-wechat-public-platform/total.svg)](https://GitHub.com/ai-chen2050/obsidian-wechat-public-platform/releases/)
 [![GitLab latest release](https://badgen.net/github/release/ai-chen2050/obsidian-wechat-public-platform/)](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)
 
-[ZH 中文](./README-zh.md) 
-
+[ZH 中文](./README-zh.md)
 
 The [Obsidian](https://obsidian.md/) WeChat public platform plug-in is an obsidian community plug-in that is used to publish articles or videos and other resources in obsidian to the WeChat public account.
-
 
 ## Video Walkthrough
 
 - Chinese Video Display 中文视频演示请点击下面图片
-<br>
+  <br>
 
-|    [Wechat Public](https://mp.weixin.qq.com/) Platform  |      [Baidu BaiJiaHao](https://baijiahao.baidu.com/)    |
-|:-----------:|:-----------:|
+|                                                   [Wechat Public](https://mp.weixin.qq.com/) Platform                                                    |                                                                       [Baidu BaiJiaHao](https://baijiahao.baidu.com/)                                                                        |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1aD4y1f7pk/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
 
-
 ## Release history
+
 https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 
 ## Functions & Command
@@ -39,14 +37,12 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 
 ---
 
-|    Overall    |    Down/Upload    |
-|:-----------:|:-----------:|
-| ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
-| ![commands](./public/commands.png)| ![download](./public/download.png) |
+|              Overall               |                 Down/Upload                  |
+| :--------------------------------: | :------------------------------------------: |
+|  ![setting](./public/setting.png)  | ![uploadMateial](./public/uploadMateial.png) |
+| ![commands](./public/commands.png) |      ![download](./public/download.png)      |
 
 ---
-
-
 
 ## Install
 
@@ -55,6 +51,36 @@ Directly search for `wechat public` in the plug-in market, find `Wechat public P
 Second method is download the [release](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases) package, then make a new dir, name to wechat-public-plugin, last put them to .obsidian/plugin, and find 3rd plugin to enable.
 
 Or download the source code and compile it into main.js manifest.json and put it in the plug-in directory under .obsidian, and then Enable.
+
+## OpenClaw CLI
+
+This repo also ships a CLI for OpenClaw automation. You can install and run it in one of these ways:
+
+```bash
+# Clone and build locally
+git clone https://github.com/ai-chen2050/obsidian-wechat-public-platform.git
+cd obsidian-wechat-public-platform
+npm install
+npm run build:cli
+./dist/wechat-public-cli.js wechat:draft --file /path/to/article.md
+```
+
+```bash
+# Install globally via npm (after publish)
+npm install -g wechat-public-cli
+wechat-public-cli wechat:draft --file /path/to/article.md
+```
+
+```bash
+# Install via OpenClaw (if available)
+claw install wechat-public-cli
+```
+
+If the CLI is published to npm, you can also run it with npx:
+
+```bash
+npx wechat-public-cli wechat:draft --file /path/to/article.md
+```
 
 ## Using case
 
@@ -83,7 +109,7 @@ digest: ""
 ### whiteList
 
 - The wechat platform request user put the client Ip to server whitelist. It's same page with API Key and Secret.
-- You could find your outneter ip in [here](https://tool.lu/ip/). 
+- You could find your outneter ip in [here](https://tool.lu/ip/).
 - And put ip [192.168.0.0/16] or [192.168.66.66] if you out network ip is [192.168.66.66]
 
 ### custom css & themes
@@ -93,23 +119,19 @@ please refer to [this page](https://github.com/ai-chen2050/obsidian-wechat-publi
 The Settings take effect only after the plug-in is restarted.
 
 ## Wechat public API
+
 [Wechat API](./docs/wepublic.md)
 
 ## Support & Funding
 
-
-| Halo | World |
-|:-----------:|:-----------:|
-|<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">|<img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">|
-
+|                                        Halo                                        |                                           World                                           |
+| :--------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: |
+| <img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300"> | <img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300"> |
 
 <div align="right">
 <a href="https://www.buymeacoffee.com/blakechan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 140px !important;" ></a>
 </div>
 
-
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=ai-chen2050/obsidian-wechat-public-platform&type=Date)](https://star-history.com/#ai-chen2050/obsidian-wechat-public-platform&Date)
-

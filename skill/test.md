@@ -1,4 +1,5 @@
 ---
+title: "Test"
 author: Blake
 digest: Short summary
 thumb_media_id: ""          # optional if you supply banner

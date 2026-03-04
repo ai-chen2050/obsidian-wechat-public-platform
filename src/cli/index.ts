@@ -146,8 +146,12 @@ const main = async () => {
 		const filePath = typeof args.file === "string" ? args.file : undefined;
 		ensureFile(filePath);
 		const { frontmatter, content, title } = readMarkdownFile(filePath!);
+		const frontTitle =
+			typeof frontmatter.title === "string"
+				? frontmatter.title
+				: undefined;
 		const resolvedTitle =
-			typeof args.title === "string" ? args.title : title;
+			typeof args.title === "string" ? args.title : (frontTitle ?? title);
 		const onlyId =
 			typeof args["only-id"] === "string"
 				? (args["only-id"] as string)
@@ -182,8 +186,12 @@ const main = async () => {
 		const filePath = typeof args.file === "string" ? args.file : undefined;
 		ensureFile(filePath);
 		const { frontmatter, content, title } = readMarkdownFile(filePath!);
+		const frontTitle =
+			typeof frontmatter.title === "string"
+				? frontmatter.title
+				: undefined;
 		const resolvedTitle =
-			typeof args.title === "string" ? args.title : title;
+			typeof args.title === "string" ? args.title : (frontTitle ?? title);
 		const client = new BjhClient(config.baidu ?? {});
 		const mediaUrl = await client.publish({
 			filePath: filePath!,

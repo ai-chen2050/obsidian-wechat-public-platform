@@ -129,6 +129,27 @@ npm run build:cli
     wechat-public-cli wechat:download --count 10 --out-dir ./wechat-downloads
     ```
 
+
+## 自定义公众号格式
+
+你可以通过定义和修改 `custom.css` 文件，来调整发布到微信公众号的文章样式。只需在根目录或配置文件指定路径下创建或编辑 `custom.css`，即可实现如字体、颜色、排版等个性化样式。
+
+AI 也可通过自动生成或修改 `custom.css`，实现对公众号内容格式的智能优化。
+
+在 `wechat-public.config.json` 的 `paths.customCss` 字段可指定自定义样式文件路径。
+
+示例：
+```css
+/* custom.css 示例 */
+.wechat-title {
+    font-size: 2em;
+    color: #2c3e50;
+}
+.wechat-banner {
+    border-radius: 8px;
+}
+```
+
 ## Notes
 
 - WeChat draft requires `thumb_media_id` or `banner`/`banner_path` in frontmatter.

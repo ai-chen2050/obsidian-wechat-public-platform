@@ -103,10 +103,14 @@ npm run build:cli
 - Create WeChat draft:
     ```bash
     wechat-public-cli wechat:draft --file /path/to/article.md
+    # 使用自定义 CSS
+    wechat-public-cli wechat:draft --file /path/to/article.md --css /path/to/tech.css
     ```
 - Publish WeChat (from file):
     ```bash
     wechat-public-cli wechat:publish --file /path/to/article.md
+    # 使用自定义 CSS
+    wechat-public-cli wechat:publish --file /path/to/article.md --css /path/to/business.css
     ```
 - Publish WeChat (from media_id):
     ```bash
@@ -119,36 +123,111 @@ npm run build:cli
 - Publish Baijiahao:
     ```bash
     wechat-public-cli bjh:publish --file /path/to/article.md
+    # 使用自定义 CSS
+    wechat-public-cli bjh:publish --file /path/to/article.md --css /path/to/custom.css
     ```
 - Convert markdown to HTML:
     ```bash
     wechat-public-cli convert --file /path/to/article.md --platform wechat
+    # 使用自定义 CSS
+    wechat-public-cli convert --file /path/to/article.md --platform wechat --css /path/to/style.css
     ```
 - Download recent N WeChat articles:
     ```bash
     wechat-public-cli wechat:download --count 10 --out-dir ./wechat-downloads
     ```
 
+### 使用自定义 CSS 样式
+
+所有发布命令都支持通过 `--css` 参数指定自定义样式文件：
+
+```bash
+# 使用技术类文章样式
+wechat-public-cli wechat:draft --file tech-article.md --css ./styles/tech.css
+
+# 使用营销类文章样式
+wechat-public-cli wechat:publish --file marketing.md --css ./styles/marketing.css
+
+# 使用教程类文章样式
+wechat-public-cli bjh:publish --file tutorial.md --css ./styles/tutorial.css
+```
 
 ## 自定义公众号格式
 
-你可以通过定义和修改 `custom.css` 文件，来调整发布到微信公众号的文章样式。只需在根目录或配置文件指定路径下创建或编辑 `custom.css`，即可实现如字体、颜色、排版等个性化样式。
+你可以通过定义和修改 CSS 文件，来调整发布到微信公众号的文章样式。支持为不同类型的文章使用不同的样式文件。
 
-AI 也可通过自动生成或修改 `custom.css`，实现对公众号内容格式的智能优化。
+### CSS 文件加载优先级
 
-在 `wechat-public.config.json` 的 `paths.customCss` 字段可指定自定义样式文件路径。
+1. **命令行参数** `--css` （最高优先级）
+2. **配置文件** `wechat-public.config.json` 中的 `paths.customCss`
+3. **默认文件** 当前目录下的 `custom.css`
+4. **空样式** 如果以上都不存在，则不应用自定义样式
 
-示例：
-```css
-/* custom.css 示例 */
-.wechat-title {
-    font-size: 2em;
-    color: #2c3e50;
-}
-.wechat-banner {
-    border-radius: 8px;
+### 使用场景示例
+
+#### 1. 使用默认样式
+
+在项目根目录创建 `custom.css`，不传任何参数时自动使用：
+
+```bash
+wechat-public-cli wechat:publish --file article.md
+```
+
+#### 2. 为不同类型文章使用不同样式
+
+创建多个 CSS 文件，通过 `--css` 参数指定：
+
+```bash
+# 技术类文章使用 tech.css
+wechat-public-cli wechat:publish --file tech-article.md --css ./styles/tech.css
+
+# 商业类文章使用 business.css
+wechat-public-cli wechat:publish --file business-article.md --css ./styles/business.css
+
+# 教程类文章使用 tutorial.css
+wechat-public-cli wechat:publish --file tutorial.md --css ./styles/tutorial.css
+```
+
+#### 3. 在配置文件中指定默认样式
+
+在 `wechat-public.config.json` 的 `paths.customCss` 字段指定默认样式文件路径：
+
+```json
+{
+	"paths": {
+		"customCss": "./styles/default.css"
+	}
 }
 ```
+
+这样不传 `--css` 参数时，会使用配置文件中指定的样式。
+
+### CSS 示例
+
+```css
+/* tech.css - 技术文章样式 */
+.wechat-title {
+	font-size: 2em;
+	color: #2c3e50;
+	font-family: "Monaco", "Consolas", monospace;
+}
+.wechat-banner {
+	border-radius: 8px;
+}
+code {
+	background-color: #f4f4f4;
+	padding: 2px 4px;
+}
+
+/* business.css - 商业文章样式 */
+.wechat-title {
+	font-size: 2.2em;
+	color: #c7254e;
+	font-family: "Arial", "Helvetica", sans-serif;
+}
+```
+
+AI 也可通过自动生成或修改 CSS 文件，实现对公众号内容格式的智能优化。
 
 ## Notes
 

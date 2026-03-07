@@ -55,6 +55,7 @@ Flags:
 	--count <number>      Number of recent articles to download
 	--out-dir <path>      Output folder for downloads
   --config <path>       Config file path
+  --css <path>          Path to custom CSS file (default: custom.css or config path)
   --platform <wechat|bjh>  Convert output style (default: wechat)
   --out <path>          Write HTML to file (convert only)
   --help                Show help
@@ -87,7 +88,19 @@ const main = async () => {
 	const configPath =
 		typeof args.config === "string" ? args.config : undefined;
 	const { config } = loadConfig(configPath);
-	const customCssPath = config.paths?.customCss;
+
+	// CSS file priority: --css arg > config > default custom.css
+	let customCssPath: string | undefined;
+	if (typeof args.css === "string") {
+		customCssPath = args.css;
+	} else if (config.paths?.customCss) {
+		customCssPath = config.paths.customCss;
+	} else {
+		// Try default custom.css in current directory
+		const defaultCss = "custom.css";
+		customCssPath = fs.existsSync(defaultCss) ? defaultCss : undefined;
+	}
+
 	const customCss =
 		customCssPath && fs.existsSync(customCssPath)
 			? fs.readFileSync(customCssPath, "utf-8")

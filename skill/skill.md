@@ -39,6 +39,16 @@ Publish an Obsidian markdown article to WeChat Public Platform or Baidu Baijiaha
 - Config file or environment variables for credentials
 - Markdown file with frontmatter (author, digest, banner or banner_path, thumb_media_id optional)
 
+## Article Template
+
+---
+
+title: "Test"
+author: Blake
+digest: Short summary
+banner: "https://image.png"
+---
+
 ## Install
 
 ```bash

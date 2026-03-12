@@ -40,25 +40,29 @@ Usage:
   wechat-public-cli <command> [--flags]
 
 Commands:
-  wechat:draft    Create a WeChat draft from a markdown file
-  wechat:publish  Publish a WeChat draft (from media_id or markdown)
-  wechat:sendall  Send to all WeChat followers (from media_id or markdown)
-	wechat:download Download recent N WeChat articles to local files
-  bjh:publish     Publish a Baijiahao article from markdown
-  convert         Convert markdown to HTML
+  wechat:draft              Create a WeChat draft from a markdown file
+  wechat:publish            Publish a WeChat draft (from media_id or markdown)
+  wechat:sendall            Send to all WeChat followers (from media_id or markdown)
+	wechat:download           Download recent N WeChat articles to local files
+  wechat:stats:cumulate     Get cumulative user statistics
+  wechat:stats:bizsummary   Get published content overview statistics
+  bjh:publish               Publish a Baijiahao article from markdown
+  convert                   Convert markdown to HTML
 
 Flags:
-  --file <path>         Path to markdown file
-  --title <title>       Override article title
-  --only-id <mediaId>   Override thumb_media_id for WeChat draft
-  --media-id <mediaId>  Use existing media_id for WeChat publish/sendall
-	--count <number>      Number of recent articles to download
-	--out-dir <path>      Output folder for downloads
-  --config <path>       Config file path
-  --css <path>          Path to custom CSS file (default: custom.css or config path)
-  --platform <wechat|bjh>  Convert output style (default: wechat)
-  --out <path>          Write HTML to file (convert only)
-  --help                Show help
+  --file <path>             Path to markdown file
+  --title <title>           Override article title
+  --only-id <mediaId>       Override thumb_media_id for WeChat draft
+  --media-id <mediaId>      Use existing media_id for WeChat publish/sendall
+	--count <number>          Number of recent articles to download
+	--out-dir <path>          Output folder for downloads
+  --begin-date <YYYY-MM-DD> Begin date for stats queries (default: 7 days ago)
+  --end-date <YYYY-MM-DD>   End date for stats queries (default: today)
+  --config <path>           Config file path
+  --css <path>              Path to custom CSS file (default: custom.css or config path)
+  --platform <wechat|bjh>   Convert output style (default: wechat)
+  --out <path>              Write HTML to file (convert only)
+  --help                    Show help
 
 Env:
   WECHAT_APPID, WECHAT_SECRET, WECHAT_ACCESS_TOKEN
@@ -193,6 +197,33 @@ const main = async () => {
 			console.log(msgId);
 			return;
 		}
+	}
+
+	if (
+		command === "wechat:stats:cumulate" ||
+		command === "wechat:stats:bizsummary"
+	) {
+		const today = new Date();
+		const defaultEnd = today.toISOString().split("T")[0];
+		today.setDate(today.getDate() - 6);
+		const defaultBegin = today.toISOString().split("T")[0];
+		const beginDate =
+			typeof args["begin-date"] === "string"
+				? args["begin-date"]
+				: defaultBegin;
+		const endDate =
+			typeof args["end-date"] === "string"
+				? args["end-date"]
+				: defaultEnd;
+		const client = new WechatClient(config.wechat ?? {});
+		if (command === "wechat:stats:cumulate") {
+			const result = await client.getUserCumulate(beginDate, endDate);
+			console.log(JSON.stringify(result, null, 2));
+		} else {
+			const result = await client.getBizSummary(beginDate, endDate);
+			console.log(JSON.stringify(result, null, 2));
+		}
+		return;
 	}
 
 	if (command === "bjh:publish") {

@@ -454,6 +454,46 @@ export class WechatClient {
 		return mediaId;
 	}
 
+	public async getUserCumulate(
+		beginDate: string,
+		endDate: string,
+	): Promise<any> {
+		const accessToken = await this.refreshAccessToken();
+		const url = `https://api.weixin.qq.com/datacube/getusercumulate?access_token=${accessToken}`;
+		const resp = await requestJson({
+			url,
+			method: "POST",
+			headers: this.getHeaders(),
+			body: JSON.stringify({ begin_date: beginDate, end_date: endDate }),
+		});
+		if (resp.json?.errcode) {
+			throw new Error(
+				`getUserCumulate failed: ${resp.json.errcode} ${resp.json.errmsg}`,
+			);
+		}
+		return resp.json;
+	}
+
+	public async getBizSummary(
+		beginDate: string,
+		endDate: string,
+	): Promise<any> {
+		const accessToken = await this.refreshAccessToken();
+		const url = `https://api.weixin.qq.com/datacube/getbizsummary?access_token=${accessToken}`;
+		const resp = await requestJson({
+			url,
+			method: "POST",
+			headers: this.getHeaders(),
+			body: JSON.stringify({ begin_date: beginDate, end_date: endDate }),
+		});
+		if (resp.json?.errcode) {
+			throw new Error(
+				`getBizSummary failed: ${resp.json.errcode} ${resp.json.errmsg}`,
+			);
+		}
+		return resp.json;
+	}
+
 	public async freePublish(mediaId: string): Promise<string> {
 		const accessToken = await this.refreshAccessToken();
 		const url = `${this.baseWxUrl}/freepublish/submit?access_token=${accessToken}`;

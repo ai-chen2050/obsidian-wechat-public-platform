@@ -32,6 +32,7 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [download-material-from-wechatpublic] download material(news,image,video,audio) from wechat public platform
 - [download-youtube-video] download video from youtube platform
 - [publish-baidu-bjh-news] publish obsidian's article to baidu's baijiahao
+- [show-wechat-stats-panel] open a statistics dashboard to view user cumulate data and published content overview (supports date range picker)
 
 <br>
 

@@ -1,3 +1,11 @@
+## 1.1.0
+
+Feat
+feat: add WeChat statistics panel (user cumulate & biz summary)
+
+功能
+新增微信公众号数据统计面板，支持查看用户累计数据和发表内容概况；同时新增 CLI 命令 `wechat:stats:cumulate` 和 `wechat:stats:bizsummary`
+
 ## 1.0.2
 
 Feat
@@ -16,7 +24,6 @@ bugfix: support callout format & fix code display
 
 > [!note]
 > hello
-
 
 ## 0.30.0
 

@@ -47,6 +47,7 @@ title: "Test"
 author: Blake
 digest: Short summary
 banner: "https://image.png"
+
 ---
 
 ## Install
@@ -145,6 +146,20 @@ npm run build:cli
 - Download recent N WeChat articles:
     ```bash
     wechat-public-cli wechat:download --count 10 --out-dir ./wechat-downloads
+    ```
+- Get cumulative user statistics:
+    ```bash
+    # 查询最近7天（默认）
+    wechat-public-cli wechat:stats:cumulate
+    # 指定日期范围（最多30天）
+    wechat-public-cli wechat:stats:cumulate --begin-date 2025-11-01 --end-date 2025-11-07
+    ```
+- Get published content overview statistics:
+    ```bash
+    # 查询最近7天（默认）
+    wechat-public-cli wechat:stats:bizsummary
+    # 指定日期范围（最多30天）
+    wechat-public-cli wechat:stats:bizsummary --begin-date 2025-11-01 --end-date 2025-11-07
     ```
 
 ### 使用自定义 CSS 样式
@@ -245,3 +260,4 @@ AI 也可通过自动生成或修改 CSS 文件，实现对公众号内容格式
 - Baijiahao publish requires `banner` or `banner_path` in frontmatter.
 - The CLI uploads inline images to the target platform automatically.
 - `wechat:download` saves recent articles in update_time order and writes all `news_item` entries.
+- `wechat:stats:cumulate` / `wechat:stats:bizsummary` must be called server-side; the date range can be at most 30 days. Results are printed as JSON to stdout.

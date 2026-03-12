@@ -13,15 +13,14 @@
 ## 中文演示视频
 
 - 中文视频演示请点击下面图片
-<br>
+  <br>
 
-|    [Wechat Public](https://mp.weixin.qq.com/) Platform    |       [Baidu BaiJiaHao](https://baijiahao.baidu.com/)    |
-|:-----------:|:-----------:|
-| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a>  | <a href="https://www.bilibili.com/video/BV1aD4y1f7pk/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
-
-
+|                                                   [Wechat Public](https://mp.weixin.qq.com/) Platform                                                    |                                                                       [Baidu BaiJiaHao](https://baijiahao.baidu.com/)                                                                        |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <a href="https://www.bilibili.com/video/BV1re411z7Ey?t=13.4"> <img src="public/obsidian-wechat.png" alt="Obsidian Wechat" width="350" height="250"> </a> | <a href="https://www.bilibili.com/video/BV1aD4y1f7pk/?vd_source=cbd98265ee43631d3c19518d1b9db358"> <img src="public/obsidian-baidu.png" alt="Obsidian Wechat" width="350" height="250"> </a> |
 
 ## 发布历史
+
 https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 
 ## 功能及命令
@@ -32,22 +31,22 @@ https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases
 - [ Send all fans to WeChatPublic ]【微信公众号发送所有费用】给粉丝群发消息（注：**需要认证有群发权限**）
 - [download youtube video] 下载 YouTube 上的视频
 - [publish article to baidu bjh news] 将 Obsidian 文章发布到百度的百家号中
+- [show-wechat-stats-panel]【微信公众号数据统计面板】弹出数据统计面板，支持查看**用户累计数据**和**发表内容概况**，可自定义日期范围
 
 <br>
 
 ---
 
-|    Overall    |    Down/Upload    |
-|:-----------:|:-----------:|
-| ![setting](./public/setting.png) | ![uploadMateial](./public/uploadMateial.png)  |
-| ![commands](./public/commands.png)| ![download](./public/download.png) |
+|              Overall               |                 Down/Upload                  |
+| :--------------------------------: | :------------------------------------------: |
+|  ![setting](./public/setting.png)  | ![uploadMateial](./public/uploadMateial.png) |
+| ![commands](./public/commands.png) |      ![download](./public/download.png)      |
 
 ---
 
-
 ## 安装
 
-直接在插件市场搜索“微信公众号”，找到“微信公众号插件”，点击“安装”进行安装。 安装完成后，点击“启用”即可启用插件。 
+直接在插件市场搜索“微信公众号”，找到“微信公众号插件”，点击“安装”进行安装。 安装完成后，点击“启用”即可启用插件。
 
 第二种方法是下载[发布包](https://github.com/ai-chen2050/obsidian-wechat-public-platform/releases)，然后创建一个新的目录，名称为wechat-public-plugin，最后把它们放到。obsidian/plugin，然后找到第三个插件来启用。
 
@@ -83,30 +82,26 @@ digest: ""
 - 您可以在[此处](https://tool.lu/ip/)找到您的外网IP。
 - 如果你的网络ip是[192.168.66.66]，则输入ip [192.168.0.0/16]或[192.168.66.66], 因为有的 IP 可能会变动。
 
-### 自定义样式与主题 
+### 自定义样式与主题
 
 请参照这个页面 [this page](https://github.com/ai-chen2050/obsidian-wechat-public-platform/issues/10).
 
 设置后需要重启插件，再次使用才可生效。
-  
+
 ## Wechat public API
+
 [Wechat API](./docs/wepublic.md)
 
 ## Support & Funding
 
-
-| Halo | World |
-|:-----------:|:-----------:|
-|<img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300">|<img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300">|
-
+|                                        Halo                                        |                                           World                                           |
+| :--------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: |
+| <img src="./public/commutity.jpg" alt="wechat-motion-qr" width="300" height="300"> | <img src="./public/wechat-motion-qr.png" alt="wechat-motion-qr" width="300" height="300"> |
 
 <div align="right">
 <a href="https://www.buymeacoffee.com/blakechan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 140px !important;" ></a>
 </div>
 
-
-
 ## Star 历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=ai-chen2050/obsidian-wechat-public-platform&type=Date)](https://star-history.com/#ai-chen2050/obsidian-wechat-public-platform&Date)
-

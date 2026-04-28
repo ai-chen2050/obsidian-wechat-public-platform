@@ -1,47 +1,46 @@
-import { Token, Tokens, Marked, options, Lexer} from "marked";
+import { Token, Tokens, Marked, options, Lexer } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
-import {calloutRender} from "./callouts";
+import { calloutRender } from "./callouts";
 import { bgHighlight } from "./bghighlight";
 import { removeWeChatPreCode } from "./code";
 
-
 export interface ParseOptions {
-    lineNumber: boolean;
-	linkStyle: 'footnote' | 'inline';
-};
+	lineNumber: boolean;
+	linkStyle: "footnote" | "inline";
+}
 
 const BlockMarkRegex = /^\^[0-9A-Za-z-]+$/;
-let AllLinks:string[] = [];
+let AllLinks: string[] = [];
 
-const parseOptions:ParseOptions = {
-    lineNumber: true,
-	linkStyle: 'footnote'
+const parseOptions: ParseOptions = {
+	lineNumber: true,
+	linkStyle: "footnote",
 };
 const markedOptiones = {
-    gfm: true,
-    breaks: true,
+	gfm: true,
+	breaks: true,
 };
 
 function footnoteLinks() {
 	if (AllLinks.length == 0) {
-	    return '';
+		return "";
 	}
-	
+
 	const links = AllLinks.map((href, i) => {
 		return `<li>${href}&nbsp;↩</li>`;
 	});
-	return `<seciton class="footnotes"><hr><ol>${links.join('')}</ol></section>`;
+	return `<seciton class="footnotes"><hr><ol>${links.join("")}</ol></section>`;
 }
 
 function EmbedBlockMark() {
 	return {
-		name: 'EmbedBlockMark',
-		level: 'inline',
+		name: "EmbedBlockMark",
+		level: "inline",
 		start(src: string) {
-			let index = src.indexOf('^');
+			let index = src.indexOf("^");
 			if (index === -1) {
-			    return;
+				return;
 			}
 			return index;
 		},
@@ -49,75 +48,77 @@ function EmbedBlockMark() {
 			const match = src.match(BlockMarkRegex);
 			if (match) {
 				return {
-					type: 'EmbedBlockMark',
+					type: "EmbedBlockMark",
 					raw: match[0],
-					text: match[0]
+					text: match[0],
 				};
 			}
 		},
 		renderer: (token: Tokens.Generic) => {
 			return `<span data-txt="${token.text}"></span}`;
-		}
-	}
+		},
+	};
 }
 
-export async function markedParse(content:string, op:ParseOptions, extensions:any[])  {
+export async function markedParse(
+	content: string,
+	op: ParseOptions,
+	extensions: any[],
+) {
 	parseOptions.lineNumber = op.lineNumber;
 	parseOptions.linkStyle = op.linkStyle;
 
 	const m = new Marked(
-	    markedHighlight({
-	    highlight(code, lang, info) {
-            const text = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            const lines = text.split("\n");
-            // Remove trailing empty line caused by trailing newline, but keep all content lines
-            if (lines.length > 0 && lines[lines.length - 1] === "") {
-                lines.pop();
-            }
-            const codeLines = [];
-            const numbers = [];
-            for (let i = 0; i < lines.length; i++) {
-                codeLines.push('<code><span class="code-snippet_outer">' + (lines[i] || "<br>") + "</span></code>");
-                numbers.push("<li></li>");
-            }
-            return (
-                '<section class="code-snippet__fix code-snippet__js">' +
-                '<ul class="code-snippet__line-index code-snippet__js">' +
-                numbers.join("") +
-                "</ul>" +
-                '<pre class="code-snippet__js" data-lang="' +
-                lang +
-                '">' +
-                codeLines.join("") +
-                "</pre></section>"
-            );
-	    }
-	  })
+		markedHighlight({
+			highlight(code, lang, info) {
+				const text = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				const lines = text.split("\n");
+				// Remove trailing empty line caused by trailing newline, but keep all content lines
+				if (lines.length > 0 && lines[lines.length - 1] === "") {
+					lines.pop();
+				}
+				const codeLines = [];
+				for (let i = 0; i < lines.length; i++) {
+					codeLines.push(
+						'<code><span class="code-snippet_outer">' +
+							(lines[i] || "<br>") +
+							"</span></code>",
+					);
+				}
+				return (
+					'<section class="code-snippet__fix code-snippet__js">' +
+					'<pre class="code-snippet__js" data-lang="' +
+					lang +
+					'">' +
+					codeLines.join("") +
+					"</pre></section>"
+				);
+			},
+		}),
 	);
 	AllLinks = [];
 	m.use(markedOptiones);
 	m.use({
 		extensions: [
-		{
-			name: 'blockquote',
-			level: 'block',
-			renderer(token) {
-				return calloutRender.call(this, token as Tokens.Blockquote);
-			}, 
-		},
-		bgHighlight(),
-		EmbedBlockMark(),
-		removeWeChatPreCode(),
-		... extensions
-	]});
+			{
+				name: "blockquote",
+				level: "block",
+				renderer(token) {
+					return calloutRender.call(this, token as Tokens.Blockquote);
+				},
+			},
+			bgHighlight(),
+			EmbedBlockMark(),
+			removeWeChatPreCode(),
+			...extensions,
+		],
+	});
 
-	const renderer = {
-		
-	};
-	m.use({renderer});
+	const renderer = {};
+	m.use({ renderer });
 	const html = await m.parse(content);
-	if (parseOptions.linkStyle == 'footnote') {
-	    return html + footnoteLinks();
+	if (parseOptions.linkStyle == "footnote") {
+		return html + footnoteLinks();
 	}
 	return html;
 }

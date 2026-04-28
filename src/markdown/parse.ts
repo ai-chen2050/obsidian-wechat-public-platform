@@ -70,9 +70,13 @@ export async function markedParse(content:string, op:ParseOptions, extensions:an
 	    highlight(code, lang, info) {
             const text = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const lines = text.split("\n");
+            // Remove trailing empty line caused by trailing newline, but keep all content lines
+            if (lines.length > 0 && lines[lines.length - 1] === "") {
+                lines.pop();
+            }
             const codeLines = [];
             const numbers = [];
-            for (let i = 0; i < lines.length - 1; i++) {
+            for (let i = 0; i < lines.length; i++) {
                 codeLines.push('<code><span class="code-snippet_outer">' + (lines[i] || "<br>") + "</span></code>");
                 numbers.push("<li></li>");
             }
